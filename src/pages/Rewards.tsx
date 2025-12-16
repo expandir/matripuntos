@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Plus, Settings } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { Reward, Couple } from '../types';
@@ -7,6 +8,7 @@ import Header from '../components/Header';
 import PointsBadge from '../components/PointsBadge';
 import RewardCard from '../components/RewardCard';
 import ConfirmDialog from '../components/ConfirmDialog';
+import RewardFormModal from '../components/RewardFormModal';
 import toast from 'react-hot-toast';
 
 export default function Rewards() {
@@ -16,6 +18,10 @@ export default function Rewards() {
   const [couple, setCouple] = useState<Couple | null>(null);
   const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
   const [loading, setLoading] = useState(true);
+  const [adminMode, setAdminMode] = useState(false);
+  const [showFormModal, setShowFormModal] = useState(false);
+  const [editingReward, setEditingReward] = useState<Reward | null>(null);
+  const [deletingReward, setDeletingReward] = useState<Reward | null>(null);
 
   useEffect(() => {
     if (!user) {
@@ -102,6 +108,76 @@ export default function Rewards() {
     }
   };
 
+  const handleCreateReward = () => {
+    setEditingReward(null);
+    setShowFormModal(true);
+  };
+
+  const handleEditReward = (reward: Reward) => {
+    setEditingReward(reward);
+    setShowFormModal(true);
+  };
+
+  const handleDeleteClick = (reward: Reward) => {
+    setDeletingReward(reward);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingReward) return;
+
+    try {
+      const { error } = await supabase
+        .from('rewards')
+        .delete()
+        .eq('id', deletingReward.id);
+
+      if (error) throw error;
+
+      toast.success('Recompensa eliminada');
+      setDeletingReward(null);
+      loadData();
+    } catch (error) {
+      console.error('Error deleting reward:', error);
+      toast.error('Error al eliminar recompensa');
+    }
+  };
+
+  const handleSaveReward = async (data: {
+    name: string;
+    description: string;
+    points_cost: number;
+    image_url: string;
+  }) => {
+    if (!userProfile?.couple_id) return;
+
+    try {
+      if (editingReward) {
+        const { error } = await supabase
+          .from('rewards')
+          .update(data)
+          .eq('id', editingReward.id);
+
+        if (error) throw error;
+        toast.success('Recompensa actualizada');
+      } else {
+        const { error } = await supabase.from('rewards').insert({
+          ...data,
+          couple_id: userProfile.couple_id,
+        });
+
+        if (error) throw error;
+        toast.success('Recompensa creada');
+      }
+
+      setShowFormModal(false);
+      setEditingReward(null);
+      loadData();
+    } catch (error) {
+      console.error('Error saving reward:', error);
+      toast.error('Error al guardar recompensa');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -118,9 +194,24 @@ export default function Rewards() {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">Catálogo de Recompensas</h1>
-            <p className="text-gray-600 dark:text-gray-300">Canjea tus puntos por momentos especiales</p>
+            <p className="text-gray-600 dark:text-gray-300">
+              {adminMode ? 'Administra el catálogo de recompensas' : 'Canjea tus puntos por momentos especiales'}
+            </p>
           </div>
-          <PointsBadge points={couple?.points || 0} />
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setAdminMode(!adminMode)}
+              className={`p-2 rounded-lg transition-colors ${
+                adminMode
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+              }`}
+              title={adminMode ? 'Salir del modo admin' : 'Modo administración'}
+            >
+              <Settings className="w-5 h-5" />
+            </button>
+            <PointsBadge points={couple?.points || 0} />
+          </div>
         </div>
 
         {rewards.length === 0 ? (
@@ -128,9 +219,15 @@ export default function Rewards() {
             <p className="text-gray-600 dark:text-gray-300 mb-4">
               Aún no hay recompensas en tu catálogo.
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Las recompensas se añadirán automáticamente cuando se inicialice el sistema.
-            </p>
+            {adminMode && (
+              <button
+                onClick={handleCreateReward}
+                className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium inline-flex items-center gap-2"
+              >
+                <Plus className="w-5 h-5" />
+                Crear Primera Recompensa
+              </button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -140,9 +237,22 @@ export default function Rewards() {
                 reward={reward}
                 onRedeem={() => handleRedeemClick(reward)}
                 disabled={!couple || couple.points < reward.points_cost}
+                adminMode={adminMode}
+                onEdit={() => handleEditReward(reward)}
+                onDelete={() => handleDeleteClick(reward)}
               />
             ))}
           </div>
+        )}
+
+        {adminMode && rewards.length > 0 && (
+          <button
+            onClick={handleCreateReward}
+            className="fixed bottom-24 md:bottom-8 right-4 p-4 bg-orange-500 text-white rounded-full shadow-lg hover:bg-orange-600 transition-all duration-200 hover:scale-110"
+            title="Crear nueva recompensa"
+          >
+            <Plus className="w-6 h-6" />
+          </button>
         )}
       </main>
 
@@ -154,6 +264,28 @@ export default function Rewards() {
           cancelText="Cancelar"
           onConfirm={handleConfirmRedeem}
           onCancel={() => setSelectedReward(null)}
+        />
+      )}
+
+      {deletingReward && (
+        <ConfirmDialog
+          title="Confirmar Eliminación"
+          message={`¿Estás seguro de eliminar "${deletingReward.name}"? Esta acción no se puede deshacer.`}
+          confirmText="Sí, eliminar"
+          cancelText="Cancelar"
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setDeletingReward(null)}
+        />
+      )}
+
+      {showFormModal && (
+        <RewardFormModal
+          reward={editingReward}
+          onSave={handleSaveReward}
+          onCancel={() => {
+            setShowFormModal(false);
+            setEditingReward(null);
+          }}
         />
       )}
     </div>

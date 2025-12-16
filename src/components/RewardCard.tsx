@@ -1,13 +1,16 @@
-import { Gift } from 'lucide-react';
+import { Gift, Pencil, Trash2 } from 'lucide-react';
 import { Reward } from '../types';
 
 interface RewardCardProps {
   reward: Reward;
   onRedeem: () => void;
   disabled?: boolean;
+  adminMode?: boolean;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
-export default function RewardCard({ reward, onRedeem, disabled }: RewardCardProps) {
+export default function RewardCard({ reward, onRedeem, disabled, adminMode, onEdit, onDelete }: RewardCardProps) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200">
       <div className="h-40 bg-gradient-to-br from-orange-100 to-pink-100 dark:from-orange-900/30 dark:to-pink-900/30 flex items-center justify-center">
@@ -32,13 +35,32 @@ export default function RewardCard({ reward, onRedeem, disabled }: RewardCardPro
             <span className="text-sm text-gray-500 dark:text-gray-400">pts</span>
           </div>
 
-          <button
-            onClick={onRedeem}
-            disabled={disabled}
-            className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-          >
-            Canjear
-          </button>
+          {adminMode ? (
+            <div className="flex gap-2">
+              <button
+                onClick={onEdit}
+                className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                title="Editar"
+              >
+                <Pencil className="w-4 h-4" />
+              </button>
+              <button
+                onClick={onDelete}
+                className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                title="Eliminar"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={onRedeem}
+              disabled={disabled}
+              className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+            >
+              Canjear
+            </button>
+          )}
         </div>
       </div>
     </div>
