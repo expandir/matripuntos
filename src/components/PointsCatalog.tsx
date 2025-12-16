@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { CatalogItem, CatalogCategory } from '../types';
 import toast from 'react-hot-toast';
 import ConfirmDialog from './ConfirmDialog';
+import { checkAndUnlockAchievements } from '../lib/achievementsService';
 
 interface PointsCatalogProps {
   coupleId: string;
@@ -90,6 +91,9 @@ export default function PointsCatalog({ coupleId, userId, onActivityComplete }: 
       if (historyError) throw historyError;
 
       toast.success(`¡Actividad completada! +${selectedItem.points_value} puntos`);
+
+      checkAndUnlockAchievements(userId);
+
       onActivityComplete();
       setShowConfirm(false);
       setSelectedItem(null);

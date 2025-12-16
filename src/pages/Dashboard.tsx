@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, TrendingUp, Award } from 'lucide-react';
+import { Plus, TrendingUp, Award, Trophy } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { Couple, HistoryEntry } from '../types';
@@ -138,7 +138,7 @@ export default function Dashboard() {
               <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Acciones Rápidas</h2>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
               <button
                 onClick={() => setShowAddModal(true)}
                 className="flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg"
@@ -153,6 +153,14 @@ export default function Dashboard() {
               >
                 <Award className="w-6 h-6" />
                 <span className="font-semibold">Ver Recompensas</span>
+              </button>
+
+              <button
+                onClick={() => navigate('/achievements')}
+                className="flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg"
+              >
+                <Trophy className="w-6 h-6" />
+                <span className="font-semibold">Ver Logros</span>
               </button>
             </div>
 

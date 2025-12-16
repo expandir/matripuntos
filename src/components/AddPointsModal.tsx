@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, Plus } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
+import { checkAndUnlockAchievements } from '../lib/achievementsService';
 
 interface AddPointsModalProps {
   coupleId: string;
@@ -54,6 +55,9 @@ export default function AddPointsModal({ coupleId, userId, onClose, onSuccess }:
       if (updateError) throw updateError;
 
       toast.success(`+${points} puntos añadidos`);
+
+      checkAndUnlockAchievements(userId);
+
       onSuccess();
       onClose();
     } catch (error: any) {

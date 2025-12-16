@@ -4,16 +4,19 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './hooks/useAuth';
 import { ThemeProvider } from './hooks/useTheme';
 import { seedPointsCatalog } from './lib/seedCatalog';
+import { seedAchievements } from './lib/seedAchievements';
 import Login from './pages/Login';
 import LinkCouple from './pages/LinkCouple';
 import Dashboard from './pages/Dashboard';
 import Rewards from './pages/Rewards';
 import History from './pages/History';
 import Profile from './pages/Profile';
+import Achievements from './pages/Achievements';
 
 function App() {
   useEffect(() => {
     seedPointsCatalog();
+    seedAchievements();
   }, []);
 
   return (
@@ -29,6 +32,7 @@ function App() {
             <Route path="/rewards" element={<Rewards />} />
             <Route path="/history" element={<History />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/achievements" element={<Achievements />} />
           </Routes>
         </AuthProvider>
       </ThemeProvider>
