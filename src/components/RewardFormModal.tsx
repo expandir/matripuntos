@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, ExternalLink } from 'lucide-react';
 import { Reward } from '../types';
+import IconSelector from './IconSelector';
 
 interface RewardFormModalProps {
   reward?: Reward | null;
@@ -9,6 +10,7 @@ interface RewardFormModalProps {
     description: string;
     points_cost: number;
     image_url: string;
+    icon: string;
   }) => void;
   onCancel: () => void;
 }
@@ -18,6 +20,7 @@ export default function RewardFormModal({ reward, onSave, onCancel }: RewardForm
   const [description, setDescription] = useState('');
   const [pointsCost, setPointsCost] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [selectedIcon, setSelectedIcon] = useState('Gift');
 
   useEffect(() => {
     if (reward) {
@@ -25,6 +28,7 @@ export default function RewardFormModal({ reward, onSave, onCancel }: RewardForm
       setDescription(reward.description);
       setPointsCost(reward.points_cost.toString());
       setImageUrl(reward.image_url || '');
+      setSelectedIcon(reward.icon || 'Gift');
     }
   }, [reward]);
 
@@ -41,12 +45,13 @@ export default function RewardFormModal({ reward, onSave, onCancel }: RewardForm
       description: description.trim(),
       points_cost: points,
       image_url: imageUrl.trim(),
+      icon: selectedIcon,
     });
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">
             {reward ? 'Editar Recompensa' : 'Nueva Recompensa'}
@@ -109,6 +114,13 @@ export default function RewardFormModal({ reward, onSave, onCancel }: RewardForm
           </div>
 
           <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Ícono de la Recompensa
+            </label>
+            <IconSelector selectedIcon={selectedIcon} onSelect={setSelectedIcon} />
+          </div>
+
+          <div>
             <label htmlFor="image" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               URL de Imagen (opcional)
             </label>
@@ -120,6 +132,18 @@ export default function RewardFormModal({ reward, onSave, onCancel }: RewardForm
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
               placeholder="https://ejemplo.com/imagen.jpg"
             />
+            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
+              Encuentra imágenes gratuitas en{' '}
+              <a
+                href="https://www.pexels.com/es-es/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-orange-500 hover:text-orange-600 inline-flex items-center gap-1"
+              >
+                Pexels
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </p>
           </div>
 
           <div className="flex gap-3 pt-4">

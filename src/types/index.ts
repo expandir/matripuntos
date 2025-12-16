@@ -20,6 +20,7 @@ export interface Reward {
   description: string;
   points_cost: number;
   image_url?: string;
+  icon?: string;
   created_at: string;
 }
 

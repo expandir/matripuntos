@@ -147,6 +147,7 @@ export default function Rewards() {
     description: string;
     points_cost: number;
     image_url: string;
+    icon: string;
   }) => {
     if (!userProfile?.couple_id) return;
 

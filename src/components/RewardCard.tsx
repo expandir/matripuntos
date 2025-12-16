@@ -1,4 +1,5 @@
 import { Gift, Pencil, Trash2 } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
 import { Reward } from '../types';
 
 interface RewardCardProps {
@@ -11,6 +12,16 @@ interface RewardCardProps {
 }
 
 export default function RewardCard({ reward, onRedeem, disabled, adminMode, onEdit, onDelete }: RewardCardProps) {
+  const getIconComponent = () => {
+    if (reward.icon) {
+      const IconComponent = (LucideIcons as any)[reward.icon];
+      return IconComponent || Gift;
+    }
+    return Gift;
+  };
+
+  const IconComponent = getIconComponent();
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200">
       <div className="h-40 bg-gradient-to-br from-orange-100 to-pink-100 dark:from-orange-900/30 dark:to-pink-900/30 flex items-center justify-center">
@@ -21,7 +32,7 @@ export default function RewardCard({ reward, onRedeem, disabled, adminMode, onEd
             className="w-full h-full object-cover"
           />
         ) : (
-          <Gift className="w-16 h-16 text-orange-400" />
+          <IconComponent className="w-16 h-16 text-orange-400" />
         )}
       </div>
 
