@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Link2, UserPlus, LogOut } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { seedRewardsForCouple } from '../lib/seedRewards';
+import { seedWeeklyChallengesForCouple } from '../lib/seedChallenges';
 import { useAuth } from '../hooks/useAuth';
 import toast from 'react-hot-toast';
 
@@ -52,6 +53,7 @@ export default function LinkCouple() {
       if (updateError) throw updateError;
 
       await seedRewardsForCouple(code);
+      await seedWeeklyChallengesForCouple(code);
 
       setGeneratedCode(code);
       toast.success('Código creado. Compártelo con tu pareja');

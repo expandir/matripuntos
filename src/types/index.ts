@@ -33,3 +33,16 @@ export interface HistoryEntry {
   description: string;
   created_at: string;
 }
+
+export interface WeeklyChallenge {
+  id: string;
+  couple_id: string;
+  name: string;
+  description: string;
+  points_reward: number;
+  icon?: string;
+  completed: boolean;
+  week_start: string;
+  completed_at?: string;
+  created_at: string;
+}

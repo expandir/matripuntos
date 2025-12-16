@@ -7,6 +7,7 @@ import { Couple, HistoryEntry } from '../types';
 import Header from '../components/Header';
 import PointsBadge from '../components/PointsBadge';
 import AddPointsModal from '../components/AddPointsModal';
+import WeeklyChallenges from '../components/WeeklyChallenges';
 import toast from 'react-hot-toast';
 
 export default function Dashboard() {
@@ -209,21 +210,14 @@ export default function Dashboard() {
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <h3 className="font-semibold text-gray-800 dark:text-white mb-4">Próximamente</h3>
-            <div className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
-              <div className="p-3 bg-blue-50 rounded-lg">
-                <p className="font-medium text-blue-800">🎯 Retos Semanales</p>
-                <p className="text-xs mt-1">Completa retos para ganar puntos extra</p>
-              </div>
-              <div className="p-3 bg-green-50 rounded-lg">
-                <p className="font-medium text-green-800">🏆 Logros</p>
-                <p className="text-xs mt-1">Desbloquea logros especiales</p>
-              </div>
-              <div className="p-3 bg-orange-50 rounded-lg">
-                <p className="font-medium text-orange-800">📊 Estadísticas</p>
-                <p className="text-xs mt-1">Analiza tu progreso mensual</p>
-              </div>
-            </div>
+            <WeeklyChallenges
+              coupleId={userProfile!.couple_id!}
+              userId={user!.id}
+              onChallengeComplete={() => {
+                loadCoupleData();
+                loadRecentHistory();
+              }}
+            />
           </div>
         </div>
       </main>
