@@ -1,0 +1,25 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo con gradiente -->
+  <rect width="512" height="512" rx="128" fill="url(#gradient)"/>
+
+  <!-- Definir gradiente -->
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Corazón blanco en el centro -->
+  <path d="M256 416C256 416 64 288 64 176C64 112 112 64 176 64C208 64 236 80 256 104C276 80 304 64 336 64C400 64 448 112 448 176C448 288 256 416 256 416Z"
+        fill="white"
+        stroke="white"
+        stroke-width="8"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+
+  <!-- Texto de puntos (estrella pequeña) -->
+  <circle cx="360" cy="140" r="48" fill="#fbbf24"/>
+  <path d="M360 116 L368 136 L390 140 L375 155 L378 177 L360 167 L342 177 L345 155 L330 140 L352 136 Z"
+        fill="white"/>
+</svg>
