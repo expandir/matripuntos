@@ -8,6 +8,7 @@ import Header from '../components/Header';
 import PointsBadge from '../components/PointsBadge';
 import AddPointsModal from '../components/AddPointsModal';
 import WeeklyChallenges from '../components/WeeklyChallenges';
+import PointsCatalog from '../components/PointsCatalog';
 import toast from 'react-hot-toast';
 
 export default function Dashboard() {
@@ -219,6 +220,17 @@ export default function Dashboard() {
               }}
             />
           </div>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+          <PointsCatalog
+            coupleId={userProfile!.couple_id!}
+            userId={user!.id}
+            onActivityComplete={() => {
+              loadCoupleData();
+              loadRecentHistory();
+            }}
+          />
         </div>
       </main>
 

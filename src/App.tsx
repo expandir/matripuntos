@@ -1,7 +1,9 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './hooks/useAuth';
 import { ThemeProvider } from './hooks/useTheme';
+import { seedPointsCatalog } from './lib/seedCatalog';
 import Login from './pages/Login';
 import LinkCouple from './pages/LinkCouple';
 import Dashboard from './pages/Dashboard';
@@ -10,6 +12,10 @@ import History from './pages/History';
 import Profile from './pages/Profile';
 
 function App() {
+  useEffect(() => {
+    seedPointsCatalog();
+  }, []);
+
   return (
     <BrowserRouter>
       <ThemeProvider>

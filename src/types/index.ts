@@ -46,3 +46,23 @@ export interface WeeklyChallenge {
   completed_at?: string;
   created_at: string;
 }
+
+export type CatalogCategory = 'romantic' | 'household' | 'health' | 'fun' | 'surprise';
+
+export interface CatalogItem {
+  id: string;
+  name: string;
+  description: string;
+  points_value: number;
+  category: CatalogCategory;
+  icon?: string;
+  created_at: string;
+}
+
+export interface CatalogCompletion {
+  id: string;
+  couple_id: string;
+  user_id: string;
+  catalog_item_id: string;
+  completed_at: string;
+}
