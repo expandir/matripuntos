@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { User } from '../types';
 import Header from '../components/Header';
+import NotificationSettings from '../components/NotificationSettings';
 import toast from 'react-hot-toast';
 
 export default function Profile() {
@@ -198,6 +199,8 @@ export default function Profile() {
                 </div>
               </div>
             )}
+
+            {user && <NotificationSettings userId={user.id} />}
 
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
               <h3 className="font-semibold text-gray-800 mb-4">Código de Pareja</h3>

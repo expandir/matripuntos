@@ -12,6 +12,7 @@ import Rewards from './pages/Rewards';
 import History from './pages/History';
 import Profile from './pages/Profile';
 import Achievements from './pages/Achievements';
+import Chat from './pages/Chat';
 
 function App() {
   useEffect(() => {
@@ -33,6 +34,7 @@ function App() {
             <Route path="/history" element={<History />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/achievements" element={<Achievements />} />
+            <Route path="/chat" element={<Chat />} />
           </Routes>
         </AuthProvider>
       </ThemeProvider>
