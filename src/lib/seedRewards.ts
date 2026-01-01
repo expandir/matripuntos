@@ -13,7 +13,7 @@ export const initialRewards = [
     description: 'Masaje relajante de 30 minutos',
     points_cost: 25,
     image_url: 'https://images.pexels.com/photos/3757952/pexels-photo-3757952.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Sparkles'
+    icon: 'Waves'
   },
   {
     name: 'Cena hecha por la otra persona',
@@ -48,7 +48,7 @@ export const initialRewards = [
     description: 'Salida de pareja sin prisas',
     points_cost: 10,
     image_url: 'https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Heart'
+    icon: 'Footprints'
   },
   {
     name: 'Fin de semana sin niños',
@@ -104,7 +104,7 @@ export const initialRewards = [
     description: 'Carta escrita a mano',
     points_cost: 6,
     image_url: 'https://images.pexels.com/photos/6372459/pexels-photo-6372459.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Heart'
+    icon: 'ScrollText'
   },
   {
     name: 'Sesión de fotos casera',
@@ -118,14 +118,14 @@ export const initialRewards = [
     description: 'Sorpresa organizada por tu pareja',
     points_cost: 28,
     image_url: 'https://images.pexels.com/photos/1303082/pexels-photo-1303082.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Sparkles'
+    icon: 'Star'
   },
   {
     name: 'Cocinar juntos',
     description: 'Cocinar juntos una receta especial',
     points_cost: 10,
     image_url: 'https://images.pexels.com/photos/3184192/pexels-photo-3184192.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Utensils'
+    icon: 'ChefHat'
   },
   {
     name: 'Noche sin responsabilidades',
@@ -139,28 +139,28 @@ export const initialRewards = [
     description: 'Espacio acondicionado para relajarse en casa',
     points_cost: 32,
     image_url: 'https://images.pexels.com/photos/3865906/pexels-photo-3865906.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Sparkles'
+    icon: 'Bath'
   },
   {
     name: 'Carta de agradecimiento pública',
     description: 'Agradecimiento en redes o a familia',
     points_cost: 5,
     image_url: 'https://images.pexels.com/photos/2072165/pexels-photo-2072165.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Star'
+    icon: 'MailOpen'
   },
   {
     name: 'Lista de tareas organizada',
     description: 'La otra persona organiza la lista',
     points_cost: 7,
     image_url: 'https://images.pexels.com/photos/4226140/pexels-photo-4226140.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Home'
+    icon: 'ClipboardList'
   },
   {
     name: 'Paseo en bici',
     description: 'Paseo corto en bici juntos',
     points_cost: 9,
     image_url: 'https://images.pexels.com/photos/1571440/pexels-photo-1571440.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Sun'
+    icon: 'Bike'
   },
   {
     name: 'Cita sorpresa en casa',
@@ -174,7 +174,7 @@ export const initialRewards = [
     description: 'Lección de ukulele o guitarra básica',
     points_cost: 20,
     image_url: 'https://images.pexels.com/photos/1751731/pexels-photo-1751731.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Music'
+    icon: 'Guitar'
   },
   {
     name: 'Elección de película',
@@ -209,7 +209,7 @@ export const initialRewards = [
     description: 'Salir a cenar a un lugar asequible',
     points_cost: 55,
     image_url: 'https://images.pexels.com/photos/1307698/pexels-photo-1307698.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Utensils'
+    icon: 'UtensilsCrossed'
   },
 ];
 
