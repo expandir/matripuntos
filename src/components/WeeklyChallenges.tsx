@@ -116,7 +116,17 @@ export default function WeeklyChallenges({ coupleId, userId, onChallengeComplete
 
   const getIconComponent = (iconName?: string) => {
     if (!iconName) return Icons.Star;
-    const Icon = (Icons as any)[iconName];
+
+    const iconNameMap: Record<string, string> = {
+      'Popcorn': 'Sandwich',
+      'TreePalm': 'Palmtree',
+      'Dices': 'Dice',
+      'PartyPopper': 'Party',
+      'Sparkle': 'Sparkles',
+    };
+
+    const mappedIconName = iconNameMap[iconName] || iconName;
+    const Icon = (Icons as any)[mappedIconName];
     return Icon || Icons.Star;
   };
 

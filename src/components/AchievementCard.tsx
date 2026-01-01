@@ -35,8 +35,17 @@ const tierLabels = {
 };
 
 export default function AchievementCard({ achievement, unlocked, unlockedAt }: AchievementCardProps) {
+  const iconNameMap: Record<string, string> = {
+    'Popcorn': 'Sandwich',
+    'TreePalm': 'Palmtree',
+    'Dices': 'Dice',
+    'PartyPopper': 'Party',
+    'Sparkle': 'Sparkles',
+  };
+
   const getIconComponent = (iconName: string) => {
-    const Icon = (Icons as any)[iconName];
+    const mappedIconName = iconNameMap[iconName] || iconName;
+    const Icon = (Icons as any)[mappedIconName];
     return Icon || Icons.Award;
   };
 

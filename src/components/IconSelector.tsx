@@ -10,18 +10,18 @@ export const REWARD_ICONS = [
   { name: 'Utensils', label: 'Cubiertos' },
   { name: 'Wine', label: 'Vino' },
   { name: 'Flower', label: 'Flor' },
-  { name: 'TreePalm', label: 'Vacaciones' },
+  { name: 'Palmtree', label: 'Vacaciones' },
   { name: 'Plane', label: 'Avión' },
   { name: 'Car', label: 'Coche' },
   { name: 'Home', label: 'Casa' },
   { name: 'Sparkles', label: 'Estrellas' },
   { name: 'Music', label: 'Música' },
   { name: 'Film', label: 'Película' },
-  { name: 'Popcorn', label: 'Palomitas' },
+  { name: 'Sandwich', label: 'Palomitas' },
   { name: 'Gamepad2', label: 'Videojuegos' },
   { name: 'Book', label: 'Libro' },
   { name: 'Camera', label: 'Cámara' },
-  { name: 'PartyPopper', label: 'Fiesta' },
+  { name: 'Party', label: 'Fiesta' },
   { name: 'Shirt', label: 'Ropa' },
   { name: 'Watch', label: 'Reloj' },
   { name: 'ShoppingBag', label: 'Compras' },
@@ -69,8 +69,17 @@ interface IconSelectorProps {
 }
 
 export default function IconSelector({ selectedIcon, onSelect }: IconSelectorProps) {
+  const iconNameMap: Record<string, string> = {
+    'Popcorn': 'Sandwich',
+    'TreePalm': 'Palmtree',
+    'Dices': 'Dice',
+    'PartyPopper': 'Party',
+    'Sparkle': 'Sparkles',
+  };
+
   const getIconComponent = (iconName: string) => {
-    const IconComponent = (LucideIcons as any)[iconName];
+    const mappedIconName = iconNameMap[iconName] || iconName;
+    const IconComponent = (LucideIcons as any)[mappedIconName];
     return IconComponent || LucideIcons.Gift;
   };
 

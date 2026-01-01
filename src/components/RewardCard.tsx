@@ -12,9 +12,18 @@ interface RewardCardProps {
 }
 
 export default function RewardCard({ reward, onRedeem, disabled, adminMode, onEdit, onDelete }: RewardCardProps) {
+  const iconNameMap: Record<string, string> = {
+    'Popcorn': 'Sandwich',
+    'TreePalm': 'Palmtree',
+    'Dices': 'Dice',
+    'PartyPopper': 'Party',
+    'Sparkle': 'Sparkles',
+  };
+
   const getIconComponent = () => {
     if (reward.icon) {
-      const IconComponent = (LucideIcons as any)[reward.icon];
+      const mappedIconName = iconNameMap[reward.icon] || reward.icon;
+      const IconComponent = (LucideIcons as any)[mappedIconName];
       return IconComponent || Gift;
     }
     return Gift;
