@@ -33,7 +33,10 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
 
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
   if (!('serviceWorker' in navigator)) {
-    console.log('Service Worker not supported');
+    return null;
+  }
+
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
     return null;
   }
 
@@ -41,10 +44,8 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
     const registration = await navigator.serviceWorker.register('/sw.js', {
       scope: '/',
     });
-    console.log('Service Worker registered:', registration);
     return registration;
-  } catch (error) {
-    console.error('Service Worker registration failed:', error);
+  } catch {
     return null;
   }
 }
