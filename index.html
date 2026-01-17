@@ -13,6 +13,15 @@
     <meta property="og:description" content="Gana puntos por cuidar a tu pareja y canjéalos por momentos especiales" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary" />
+    <script>
+      (function() {
+        const theme = localStorage.getItem('theme');
+        const isDark = theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
 </head>
   <body>
     <div id="root"></div>

@@ -20,73 +20,61 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const hasStoredSession = localStorage.getItem('matripuntos-auth');
+    let isMounted = true;
 
-    if (!hasStoredSession) {
-      setUser(null);
-      setUserProfile(null);
-      setLoading(false);
+    const initializeAuth = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
 
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_IN') {
-          setUser(session?.user ?? null);
-          if (session?.user) {
-            loadUserProfile(session.user.id);
-          }
+        if (!isMounted) return;
+
+        if (error) {
+          console.error('Error getting session:', error);
+          setUser(null);
+          setUserProfile(null);
+          setLoading(false);
+          return;
         }
-      });
 
-      return () => subscription.unsubscribe();
-    }
-
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (error) {
-        console.error('Error getting session:', error);
-        setUser(null);
-        setUserProfile(null);
-        setLoading(false);
-        return;
-      }
-
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        loadUserProfile(session.user.id);
-      } else {
-        setLoading(false);
-      }
-    }).catch((error) => {
-      console.error('Session error:', error);
-      setUser(null);
-      setUserProfile(null);
-      setLoading(false);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
-        setUser(null);
-        setUserProfile(null);
-        setLoading(false);
-      } else if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
         setUser(session?.user ?? null);
         if (session?.user) {
-          loadUserProfile(session.user.id);
-        }
-      } else {
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          loadUserProfile(session.user.id);
+          await loadUserProfile(session.user.id);
         } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Session error:', error);
+        if (isMounted) {
+          setUser(null);
           setUserProfile(null);
           setLoading(false);
         }
       }
+    };
+
+    initializeAuth();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!isMounted) return;
+
+      if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+        setUser(null);
+        setUserProfile(null);
+        setLoading(false);
+      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          await loadUserProfile(session.user.id);
+        }
+      }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const loadUserProfile = async (userId: string) => {
