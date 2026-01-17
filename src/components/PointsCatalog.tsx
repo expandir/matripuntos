@@ -65,6 +65,15 @@ export default function PointsCatalog({ coupleId, userId, onActivityComplete }: 
 
     try {
       await ensureSession();
+
+      const { data: couple, error: coupleReadError } = await supabase
+        .from('couples')
+        .select('points')
+        .eq('id', coupleId)
+        .single();
+
+      if (coupleReadError) throw coupleReadError;
+
       const { error: completionError } = await supabase
         .from('catalog_completions')
         .insert({
@@ -78,7 +87,7 @@ export default function PointsCatalog({ coupleId, userId, onActivityComplete }: 
       const { error: coupleError } = await supabase
         .from('couples')
         .update({
-          points: supabase.raw(`points + ${selectedItem.points_value}`),
+          points: couple.points + selectedItem.points_value,
         })
         .eq('id', coupleId);
 

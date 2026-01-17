@@ -79,6 +79,15 @@ export default function WeeklyChallenges({ coupleId, userId, onChallengeComplete
 
     try {
       await ensureSession();
+
+      const { data: couple, error: coupleReadError } = await supabase
+        .from('couples')
+        .select('points')
+        .eq('id', coupleId)
+        .single();
+
+      if (coupleReadError) throw coupleReadError;
+
       const { error: updateError } = await supabase
         .from('weekly_challenges')
         .update({
@@ -92,7 +101,7 @@ export default function WeeklyChallenges({ coupleId, userId, onChallengeComplete
       const { error: coupleError } = await supabase
         .from('couples')
         .update({
-          points: supabase.raw(`points + ${selectedChallenge.points_reward}`),
+          points: couple.points + selectedChallenge.points_reward,
         })
         .eq('id', coupleId);
 
