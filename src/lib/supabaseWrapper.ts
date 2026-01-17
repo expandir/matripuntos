@@ -8,10 +8,17 @@ export async function withSessionRefresh<T>(
   } catch (error: any) {
     if (
       error.message?.includes('Auth session missing') ||
-      error.message?.includes('JWT') ||
-      error.message?.includes('session')
+      error.message?.includes('JWT expired') ||
+      error.message?.includes('refresh_token')
     ) {
       console.log('Session error detected, attempting refresh...');
+
+      const hasStoredSession = localStorage.getItem('matripuntos-auth');
+
+      if (!hasStoredSession) {
+        console.log('No stored session found, cannot refresh');
+        throw new Error('Session expired. Please log in again.');
+      }
 
       try {
         const { data: { session }, error: refreshError } = await supabase.auth.refreshSession();
@@ -39,18 +46,13 @@ export async function ensureValidSession(): Promise<boolean> {
   try {
     const { data: { session }, error } = await supabase.auth.getSession();
 
-    if (error || !session) {
-      console.log('No valid session, attempting refresh...');
-      const { data: { session: newSession }, error: refreshError } = await supabase.auth.refreshSession();
+    if (error) {
+      console.error('Session error:', error);
+      return false;
+    }
 
-      if (refreshError || !newSession) {
-        console.error('Session refresh failed:', refreshError);
-        localStorage.removeItem('matripuntos-auth');
-        return false;
-      }
-
-      console.log('Session refreshed successfully');
-      return true;
+    if (!session) {
+      return false;
     }
 
     return true;
