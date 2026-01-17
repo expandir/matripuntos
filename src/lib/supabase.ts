@@ -16,4 +16,9 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     storageKey: 'matripuntos-auth',
     flowType: 'pkce',
   },
+  global: {
+    headers: {
+      'X-Client-Info': 'matripuntos-web',
+    },
+  },
 });

@@ -20,6 +20,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const hasStoredSession = localStorage.getItem('matripuntos-auth');
+
+    if (!hasStoredSession) {
+      setUser(null);
+      setUserProfile(null);
+      setLoading(false);
+
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN') {
+          setUser(session?.user ?? null);
+          if (session?.user) {
+            loadUserProfile(session.user.id);
+          }
+        }
+      });
+
+      return () => subscription.unsubscribe();
+    }
+
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       if (error) {
         console.error('Error getting session:', error);
