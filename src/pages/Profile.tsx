@@ -109,6 +109,14 @@ export default function Profile() {
     setUpdatingPassword(true);
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
+        toast.error('Sesión expirada. Por favor, inicia sesión nuevamente');
+        navigate('/login');
+        return;
+      }
+
       const { error } = await supabase.auth.updateUser({
         password: newPassword,
       });
