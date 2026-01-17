@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as Icons from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { ensureSession } from '../lib/sessionHelper';
 import { WeeklyChallenge } from '../types';
 import toast from 'react-hot-toast';
 import ConfirmDialog from './ConfirmDialog';
@@ -12,6 +14,7 @@ interface WeeklyChallengesProps {
 }
 
 export default function WeeklyChallenges({ coupleId, userId, onChallengeComplete }: WeeklyChallengesProps) {
+  const navigate = useNavigate();
   const [challenges, setChallenges] = useState<WeeklyChallenge[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedChallenge, setSelectedChallenge] = useState<WeeklyChallenge | null>(null);
@@ -75,6 +78,7 @@ export default function WeeklyChallenges({ coupleId, userId, onChallengeComplete
     if (!selectedChallenge) return;
 
     try {
+      await ensureSession();
       const { error: updateError } = await supabase
         .from('weekly_challenges')
         .update({
@@ -108,9 +112,14 @@ export default function WeeklyChallenges({ coupleId, userId, onChallengeComplete
       onChallengeComplete();
       setShowConfirm(false);
       setSelectedChallenge(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error completing challenge:', error);
-      toast.error('Error al completar el reto');
+      if (error.message?.includes('No active session')) {
+        toast.error('Sesión expirada. Por favor, inicia sesión nuevamente');
+        navigate('/login');
+      } else {
+        toast.error('Error al completar el reto');
+      }
     }
   };
 

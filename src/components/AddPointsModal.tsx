@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { X, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { ensureSession } from '../lib/sessionHelper';
 import toast from 'react-hot-toast';
 import { checkAndUnlockAchievements } from '../lib/achievementsService';
 
@@ -12,6 +14,7 @@ interface AddPointsModalProps {
 }
 
 export default function AddPointsModal({ coupleId, userId, onClose, onSuccess }: AddPointsModalProps) {
+  const navigate = useNavigate();
   const [points, setPoints] = useState(5);
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
@@ -27,6 +30,7 @@ export default function AddPointsModal({ coupleId, userId, onClose, onSuccess }:
     setLoading(true);
 
     try {
+      await ensureSession();
       const { data: couple } = await supabase
         .from('couples')
         .select('points')
@@ -62,7 +66,12 @@ export default function AddPointsModal({ coupleId, userId, onClose, onSuccess }:
       onClose();
     } catch (error: any) {
       console.error('Error adding points:', error);
-      toast.error('Error al añadir puntos');
+      if (error.message?.includes('No active session')) {
+        toast.error('Sesión expirada. Por favor, inicia sesión nuevamente');
+        navigate('/login');
+      } else {
+        toast.error('Error al añadir puntos');
+      }
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as Icons from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { ensureSession } from '../lib/sessionHelper';
 import { CatalogItem, CatalogCategory } from '../types';
 import toast from 'react-hot-toast';
 import ConfirmDialog from './ConfirmDialog';
@@ -29,6 +31,7 @@ const categoryNames = {
 };
 
 export default function PointsCatalog({ coupleId, userId, onActivityComplete }: PointsCatalogProps) {
+  const navigate = useNavigate();
   const [catalogItems, setCatalogItems] = useState<CatalogItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<CatalogCategory | 'all'>('all');
@@ -61,6 +64,7 @@ export default function PointsCatalog({ coupleId, userId, onActivityComplete }: 
     if (!selectedItem) return;
 
     try {
+      await ensureSession();
       const { error: completionError } = await supabase
         .from('catalog_completions')
         .insert({
@@ -97,9 +101,14 @@ export default function PointsCatalog({ coupleId, userId, onActivityComplete }: 
       onActivityComplete();
       setShowConfirm(false);
       setSelectedItem(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error completing activity:', error);
-      toast.error('Error al completar la actividad');
+      if (error.message?.includes('No active session')) {
+        toast.error('Sesión expirada. Por favor, inicia sesión nuevamente');
+        navigate('/login');
+      } else {
+        toast.error('Error al completar la actividad');
+      }
     }
   };
 
