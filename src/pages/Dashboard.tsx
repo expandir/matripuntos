@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, TrendingUp, Award, Trophy, MessageCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { withSessionRefresh } from '../lib/supabaseWrapper';
 import { useAuth } from '../hooks/useAuth';
 import { Couple, HistoryEntry } from '../types';
 import Header from '../components/Header';
@@ -75,17 +76,26 @@ export default function Dashboard() {
     if (!userProfile?.couple_id) return;
 
     try {
-      const { data, error } = await supabase
-        .from('couples')
-        .select('*')
-        .eq('id', userProfile.couple_id)
-        .single();
+      const data = await withSessionRefresh(async () => {
+        const { data, error } = await supabase
+          .from('couples')
+          .select('*')
+          .eq('id', userProfile.couple_id)
+          .single();
 
-      if (error) throw error;
+        if (error) throw error;
+        return data;
+      });
+
       setCouple(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading couple data:', error);
-      toast.error('Error al cargar datos');
+      if (error.message?.includes('Session expired')) {
+        toast.error('Sesión expirada. Por favor, inicia sesión nuevamente');
+        navigate('/login');
+      } else {
+        toast.error('Error al cargar datos');
+      }
     } finally {
       setLoading(false);
     }
@@ -95,17 +105,25 @@ export default function Dashboard() {
     if (!userProfile?.couple_id) return;
 
     try {
-      const { data, error } = await supabase
-        .from('history')
-        .select('*')
-        .eq('couple_id', userProfile.couple_id)
-        .order('created_at', { ascending: false })
-        .limit(5);
+      const data = await withSessionRefresh(async () => {
+        const { data, error } = await supabase
+          .from('history')
+          .select('*')
+          .eq('couple_id', userProfile.couple_id)
+          .order('created_at', { ascending: false })
+          .limit(5);
 
-      if (error) throw error;
-      setRecentHistory(data || []);
-    } catch (error) {
+        if (error) throw error;
+        return data || [];
+      });
+
+      setRecentHistory(data);
+    } catch (error: any) {
       console.error('Error loading history:', error);
+      if (error.message?.includes('Session expired')) {
+        toast.error('Sesión expirada. Por favor, inicia sesión nuevamente');
+        navigate('/login');
+      }
     }
   };
 

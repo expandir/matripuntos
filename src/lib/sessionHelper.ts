@@ -17,9 +17,19 @@ export async function checkSession(): Promise<boolean> {
 }
 
 export async function ensureSession(): Promise<void> {
-  const hasSession = await checkSession();
+  try {
+    const { data: { session }, error } = await supabase.auth.refreshSession();
 
-  if (!hasSession) {
+    if (error) {
+      console.error('Session refresh error:', error);
+      throw new Error('No active session. Please log in again.');
+    }
+
+    if (!session) {
+      throw new Error('No active session. Please log in again.');
+    }
+  } catch (error: any) {
+    console.error('Error ensuring session:', error);
     throw new Error('No active session. Please log in again.');
   }
 }

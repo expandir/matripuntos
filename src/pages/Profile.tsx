@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, Mail, Calendar, Users, Award, KeyRound, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { withSessionRefresh } from '../lib/supabaseWrapper';
 import { useAuth } from '../hooks/useAuth';
 import { User } from '../types';
 import Header from '../components/Header';
@@ -41,43 +42,52 @@ export default function Profile() {
     if (!userProfile?.couple_id || !user) return;
 
     try {
-      const [partnerResult, historyResult] = await Promise.all([
-        supabase
-          .from('users')
-          .select('*')
-          .eq('couple_id', userProfile.couple_id)
-          .neq('id', user.id)
-          .maybeSingle(),
-        supabase
-          .from('history')
-          .select('*')
-          .eq('couple_id', userProfile.couple_id)
-          .eq('user_id', user.id),
-      ]);
+      const [partnerData, historyData] = await withSessionRefresh(async () => {
+        const [partnerResult, historyResult] = await Promise.all([
+          supabase
+            .from('users')
+            .select('*')
+            .eq('couple_id', userProfile.couple_id)
+            .neq('id', user.id)
+            .maybeSingle(),
+          supabase
+            .from('history')
+            .select('*')
+            .eq('couple_id', userProfile.couple_id)
+            .eq('user_id', user.id),
+        ]);
 
-      if (partnerResult.error) throw partnerResult.error;
-      if (historyResult.error) throw historyResult.error;
+        if (partnerResult.error) throw partnerResult.error;
+        if (historyResult.error) throw historyResult.error;
 
-      setPartner(partnerResult.data);
+        return [partnerResult.data, historyResult.data];
+      });
 
-      const gained = historyResult.data
+      setPartner(partnerData);
+
+      const gained = historyData
         ?.filter((e) => e.type === 'gain')
         .reduce((sum, e) => sum + e.points, 0) || 0;
 
-      const spent = historyResult.data
+      const spent = historyData
         ?.filter((e) => e.type === 'spend')
         .reduce((sum, e) => sum + Math.abs(e.points), 0) || 0;
 
-      const redeemed = historyResult.data?.filter((e) => e.type === 'spend').length || 0;
+      const redeemed = historyData?.filter((e) => e.type === 'spend').length || 0;
 
       setStats({
         totalGained: gained,
         totalSpent: spent,
         rewardsRedeemed: redeemed,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading profile data:', error);
-      toast.error('Error al cargar perfil');
+      if (error.message?.includes('Session expired')) {
+        toast.error('Sesión expirada. Por favor, inicia sesión nuevamente');
+        navigate('/login');
+      } else {
+        toast.error('Error al cargar perfil');
+      }
     } finally {
       setLoading(false);
     }
@@ -109,19 +119,13 @@ export default function Profile() {
     setUpdatingPassword(true);
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      await withSessionRefresh(async () => {
+        const { error } = await supabase.auth.updateUser({
+          password: newPassword,
+        });
 
-      if (!session) {
-        toast.error('Sesión expirada. Por favor, inicia sesión nuevamente');
-        navigate('/login');
-        return;
-      }
-
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword,
+        if (error) throw error;
       });
-
-      if (error) throw error;
 
       toast.success('Contraseña actualizada correctamente');
       setShowPasswordModal(false);
@@ -129,7 +133,13 @@ export default function Profile() {
       setConfirmPassword('');
     } catch (error: any) {
       console.error('Error updating password:', error);
-      toast.error(error.message || 'Error al cambiar la contraseña');
+      if (error.message?.includes('Session expired')) {
+        toast.error('Sesión expirada. Por favor, inicia sesión nuevamente');
+        await signOut();
+        navigate('/login');
+      } else {
+        toast.error(error.message || 'Error al cambiar la contraseña');
+      }
     } finally {
       setUpdatingPassword(false);
     }

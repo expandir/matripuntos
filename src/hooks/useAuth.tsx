@@ -133,6 +133,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+
+      setUser(null);
+      setUserProfile(null);
+
+      localStorage.removeItem('matripuntos-auth');
     } catch (error) {
       console.error('Error signing out:', error);
       throw error;

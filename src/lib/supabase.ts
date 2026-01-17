@@ -13,5 +13,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     detectSessionInUrl: true,
     storage: window.localStorage,
+    storageKey: 'matripuntos-auth',
+    flowType: 'pkce',
   },
 });
