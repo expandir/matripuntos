@@ -43,23 +43,44 @@ export default function LinkCouple() {
           points: 0,
         });
 
-      if (coupleError) throw coupleError;
+      if (coupleError) {
+        console.error('Error creating couple:', coupleError);
+        throw new Error('No se pudo crear la pareja');
+      }
 
-      const { error: updateError } = await supabase
+      const { data: updatedUser, error: updateError } = await supabase
         .from('users')
         .update({ couple_id: code })
-        .eq('id', user.id);
+        .eq('id', user.id)
+        .select()
+        .single();
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error('Error updating user:', updateError);
+        throw new Error('No se pudo vincular tu cuenta');
+      }
 
-      await seedRewardsForCouple(code);
-      await seedWeeklyChallengesForCouple(code);
+      if (!updatedUser || updatedUser.couple_id !== code) {
+        throw new Error('La vinculación no se completó correctamente');
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const rewardsResult = await seedRewardsForCouple(code);
+      if (!rewardsResult.success) {
+        console.error('Error seeding rewards:', rewardsResult.error);
+      }
+
+      const challengesResult = await seedWeeklyChallengesForCouple(code);
+      if (!challengesResult.success) {
+        console.error('Error seeding challenges:', challengesResult.error);
+      }
 
       setGeneratedCode(code);
       toast.success('Código creado. Compártelo con tu pareja');
     } catch (error: any) {
       console.error('Error creating couple:', error);
-      toast.error('Error al crear el código');
+      toast.error(error.message || 'Error al crear el código');
     } finally {
       setLoading(false);
     }
