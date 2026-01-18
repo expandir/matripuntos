@@ -12,42 +12,69 @@ function generateCoupleCode(): string {
 }
 
 export default function LinkCouple() {
-  const { user, userProfile, signOut } = useAuth();
+  const { user, userProfile, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const [generatedCode, setGeneratedCode] = useState('');
   const [inputCode, setInputCode] = useState('');
   const [loading, setLoading] = useState(false);
 
+  console.log('🔵 LinkCouple render:', { user: user?.id, userProfile, authLoading, loading });
+
   useEffect(() => {
+    console.log('🔵 LinkCouple useEffect:', { user: user?.id, userProfile: userProfile?.couple_id, authLoading });
+
+    if (authLoading) {
+      console.log('🔵 Auth still loading, waiting...');
+      return;
+    }
+
     if (!user) {
+      console.log('🔵 No user, redirecting to login');
       navigate('/login');
       return;
     }
 
     if (userProfile?.couple_id) {
+      console.log('🔵 User already has couple_id, redirecting to dashboard');
       navigate('/dashboard');
     }
-  }, [user, userProfile, navigate]);
+  }, [user, userProfile, authLoading, navigate]);
 
   const handleCreateCouple = async () => {
-    if (!user) return;
+    console.log('🔵 handleCreateCouple called');
+    console.log('🔵 User:', user?.id);
+
+    if (!user) {
+      console.log('🔴 No user found');
+      toast.error('No hay usuario autenticado');
+      return;
+    }
+
     setLoading(true);
+    console.log('🔵 Loading set to true');
 
     try {
       const code = generateCoupleCode();
+      console.log('🔵 Generated code:', code);
 
-      const { error: coupleError } = await supabase
+      console.log('🔵 Attempting to create couple...');
+      const { data: coupleData, error: coupleError } = await supabase
         .from('couples')
         .insert({
           id: code,
           points: 0,
-        });
+        })
+        .select()
+        .single();
+
+      console.log('🔵 Couple creation response:', { coupleData, coupleError });
 
       if (coupleError) {
-        console.error('Error creating couple:', coupleError);
-        throw new Error('No se pudo crear la pareja');
+        console.error('🔴 Error creating couple:', coupleError);
+        throw new Error(`No se pudo crear la pareja: ${coupleError.message}`);
       }
 
+      console.log('🔵 Couple created successfully, updating user...');
       const { data: updatedUser, error: updateError } = await supabase
         .from('users')
         .update({ couple_id: code })
@@ -55,33 +82,43 @@ export default function LinkCouple() {
         .select()
         .single();
 
+      console.log('🔵 User update response:', { updatedUser, updateError });
+
       if (updateError) {
-        console.error('Error updating user:', updateError);
-        throw new Error('No se pudo vincular tu cuenta');
+        console.error('🔴 Error updating user:', updateError);
+        throw new Error(`No se pudo vincular tu cuenta: ${updateError.message}`);
       }
 
       if (!updatedUser || updatedUser.couple_id !== code) {
+        console.error('🔴 User update verification failed:', updatedUser);
         throw new Error('La vinculación no se completó correctamente');
       }
 
+      console.log('🔵 User updated successfully, waiting...');
       await new Promise(resolve => setTimeout(resolve, 100));
 
+      console.log('🔵 Seeding rewards...');
       const rewardsResult = await seedRewardsForCouple(code);
+      console.log('🔵 Rewards result:', rewardsResult);
       if (!rewardsResult.success) {
-        console.error('Error seeding rewards:', rewardsResult.error);
+        console.error('🟡 Warning: Error seeding rewards:', rewardsResult.error);
       }
 
+      console.log('🔵 Seeding challenges...');
       const challengesResult = await seedWeeklyChallengesForCouple(code);
+      console.log('🔵 Challenges result:', challengesResult);
       if (!challengesResult.success) {
-        console.error('Error seeding challenges:', challengesResult.error);
+        console.error('🟡 Warning: Error seeding challenges:', challengesResult.error);
       }
 
+      console.log('🟢 Success! Setting generated code:', code);
       setGeneratedCode(code);
       toast.success('Código creado. Compártelo con tu pareja');
     } catch (error: any) {
-      console.error('Error creating couple:', error);
+      console.error('🔴 Error creating couple:', error);
       toast.error(error.message || 'Error al crear el código');
     } finally {
+      console.log('🔵 Setting loading to false');
       setLoading(false);
     }
   };
@@ -167,11 +204,15 @@ export default function LinkCouple() {
             </p>
 
             <button
-              onClick={handleCreateCouple}
-              disabled={loading || !!generatedCode}
+              onClick={(e) => {
+                e.preventDefault();
+                console.log('🔵 Button clicked!');
+                handleCreateCouple();
+              }}
+              disabled={loading || !!generatedCode || authLoading}
               className="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-semibold py-3 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Generando...' : 'Crear Código'}
+              {loading ? 'Generando...' : authLoading ? 'Cargando...' : 'Crear Código'}
             </button>
 
             {generatedCode && (
