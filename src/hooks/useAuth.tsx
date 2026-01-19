@@ -20,17 +20,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (loading) {
-        console.warn('🟡 Auth loading timeout - forcing loading to false');
-        setLoading(false);
-      }
-    }, 5000);
-
-    return () => clearTimeout(timeout);
-  }, [loading]);
-
-  useEffect(() => {
     let isMounted = true;
 
     const initializeAuth = async () => {
