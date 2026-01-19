@@ -12,23 +12,26 @@ import Achievements from './pages/Achievements';
 import Chat from './pages/Chat';
 
 function App() {
+  console.log('App component rendering');
 
   return (
     <BrowserRouter>
       <ThemeProvider>
         <AuthProvider>
-          <Toaster position="top-center" />
-          <Routes>
-            <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/link" element={<LinkCouple />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/rewards" element={<Rewards />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/achievements" element={<Achievements />} />
-            <Route path="/chat" element={<Chat />} />
-          </Routes>
+          <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}>
+            <Toaster position="top-center" />
+            <Routes>
+              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/link" element={<LinkCouple />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/rewards" element={<Rewards />} />
+              <Route path="/history" element={<History />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/achievements" element={<Achievements />} />
+              <Route path="/chat" element={<Chat />} />
+            </Routes>
+          </div>
         </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>

@@ -19,14 +19,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [userProfile, setUserProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  console.log('AuthProvider render - loading:', loading, 'user:', user?.id, 'profile:', userProfile?.id);
+
   useEffect(() => {
     let isMounted = true;
 
     const initializeAuth = async () => {
+      console.log('Initializing auth...');
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
 
-        if (!isMounted) return;
+        if (!isMounted) {
+          console.log('Component unmounted, skipping');
+          return;
+        }
 
         if (error) {
           console.error('Error getting session:', error);
@@ -36,11 +42,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return;
         }
 
+        console.log('Session loaded:', session?.user?.id);
         setUser(session?.user ?? null);
 
         if (session?.user) {
           await loadUserProfile(session.user.id);
         } else {
+          console.log('No session, setting loading to false');
           setLoading(false);
         }
       } catch (error) {
@@ -167,6 +175,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw error;
     }
   };
+
+  if (loading) {
+    return (
+      <AuthContext.Provider value={{ user, userProfile, loading, signInWithEmail, signUpWithEmail, signOut }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+          backgroundColor: '#fff'
+        }}>
+          <div>
+            <div style={{
+              width: '50px',
+              height: '50px',
+              border: '5px solid #f3f3f3',
+              borderTop: '5px solid #f97316',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite'
+            }}></div>
+            <p style={{ marginTop: '16px', color: '#666' }}>Cargando...</p>
+          </div>
+        </div>
+      </AuthContext.Provider>
+    );
+  }
 
   return (
     <AuthContext.Provider value={{ user, userProfile, loading, signInWithEmail, signUpWithEmail, signOut }}>
