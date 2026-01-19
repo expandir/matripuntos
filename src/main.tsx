@@ -2,31 +2,14 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
-import { ErrorBoundary } from './components/ErrorBoundary';
+import { registerServiceWorker } from './lib/pushNotificationService';
 
-const rootElement = document.getElementById('root');
+registerServiceWorker().catch((error) => {
+  console.error('Failed to register service worker:', error);
+});
 
-if (!rootElement) {
-  console.error('Root element not found!');
-  throw new Error('Root element not found');
-}
-
-try {
-  import('./lib/pushNotificationService').then(({ registerServiceWorker }) => {
-    registerServiceWorker().catch((error) => {
-      console.error('Failed to register service worker:', error);
-    });
-  }).catch(error => {
-    console.error('Failed to load push notification service:', error);
-  });
-} catch (error) {
-  console.error('Error importing push notification service:', error);
-}
-
-createRoot(rootElement).render(
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
+    <App />
   </StrictMode>
 );

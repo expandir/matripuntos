@@ -19,71 +19,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [userProfile, setUserProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  console.log('AuthProvider render - loading:', loading, 'user:', user?.id, 'profile:', userProfile?.id);
-
   useEffect(() => {
-    let isMounted = true;
-
-    const initializeAuth = async () => {
-      console.log('Initializing auth...');
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-
-        if (!isMounted) {
-          console.log('Component unmounted, skipping');
-          return;
-        }
-
-        if (error) {
-          console.error('Error getting session:', error);
-          setUser(null);
-          setUserProfile(null);
-          setLoading(false);
-          return;
-        }
-
-        console.log('Session loaded:', session?.user?.id);
-        setUser(session?.user ?? null);
-
-        if (session?.user) {
-          await loadUserProfile(session.user.id);
-        } else {
-          console.log('No session, setting loading to false');
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error('Session error:', error);
-        if (isMounted) {
-          setUser(null);
-          setUserProfile(null);
-          setLoading(false);
-        }
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error('Error getting session:', error);
+        setUser(null);
+        setUserProfile(null);
+        setLoading(false);
+        return;
       }
-    };
 
-    initializeAuth();
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        loadUserProfile(session.user.id);
+      } else {
+        setLoading(false);
+      }
+    }).catch((error) => {
+      console.error('Session error:', error);
+      setUser(null);
+      setUserProfile(null);
+      setLoading(false);
+    });
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (!isMounted) return;
-
+    } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
         setUser(null);
         setUserProfile(null);
         setLoading(false);
-      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+      } else if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
         setUser(session?.user ?? null);
         if (session?.user) {
-          await loadUserProfile(session.user.id);
+          loadUserProfile(session.user.id);
+        }
+      } else {
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          loadUserProfile(session.user.id);
+        } else {
+          setUserProfile(null);
+          setLoading(false);
         }
       }
     });
 
-    return () => {
-      isMounted = false;
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   const loadUserProfile = async (userId: string) => {
@@ -94,24 +76,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq('id', userId)
         .maybeSingle();
 
-      if (error) {
-        console.error('Error loading user profile:', error);
-        setUserProfile(null);
-        setLoading(false);
-        return;
-      }
-
-      if (!data) {
-        console.warn('No user profile found, creating one...');
-        setUserProfile(null);
-        setLoading(false);
-        return;
-      }
-
+      if (error) throw error;
       setUserProfile(data);
     } catch (error) {
-      console.error('Error in loadUserProfile:', error);
-      setUserProfile(null);
+      console.error('Error loading user profile:', error);
     } finally {
       setLoading(false);
     }
@@ -175,32 +143,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw error;
     }
   };
-
-  if (loading) {
-    return (
-      <AuthContext.Provider value={{ user, userProfile, loading, signInWithEmail, signUpWithEmail, signOut }}>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '100vh',
-          backgroundColor: '#fff'
-        }}>
-          <div>
-            <div style={{
-              width: '50px',
-              height: '50px',
-              border: '5px solid #f3f3f3',
-              borderTop: '5px solid #f97316',
-              borderRadius: '50%',
-              animation: 'spin 1s linear infinite'
-            }}></div>
-            <p style={{ marginTop: '16px', color: '#666' }}>Cargando...</p>
-          </div>
-        </div>
-      </AuthContext.Provider>
-    );
-  }
 
   return (
     <AuthContext.Provider value={{ user, userProfile, loading, signInWithEmail, signUpWithEmail, signOut }}>
