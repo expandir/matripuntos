@@ -20,6 +20,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (loading) {
+        console.warn('🟡 Auth loading timeout - forcing loading to false');
+        setLoading(false);
+      }
+    }, 5000);
+
+    return () => clearTimeout(timeout);
+  }, [loading]);
+
+  useEffect(() => {
     let isMounted = true;
 
     const initializeAuth = async () => {
@@ -37,6 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
 
         setUser(session?.user ?? null);
+
         if (session?.user) {
           await loadUserProfile(session.user.id);
         } else {
@@ -85,10 +97,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq('id', userId)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error loading user profile:', error);
+        setUserProfile(null);
+        setLoading(false);
+        return;
+      }
+
+      if (!data) {
+        console.warn('No user profile found, creating one...');
+        setUserProfile(null);
+        setLoading(false);
+        return;
+      }
+
       setUserProfile(data);
     } catch (error) {
-      console.error('Error loading user profile:', error);
+      console.error('Error in loadUserProfile:', error);
+      setUserProfile(null);
     } finally {
       setLoading(false);
     }
