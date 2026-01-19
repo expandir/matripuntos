@@ -97,29 +97,17 @@ export default function History() {
       <Header />
 
       <main className="max-w-7xl mx-auto px-4 py-6">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Historial de Actividad</h1>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">Historial de Actividad</h1>
 
         <div className="grid md:grid-cols-3 gap-6 mb-6">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Total Ganado</p>
-                <p className="text-3xl font-bold text-green-600">{totalGained}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Total Ganado</p>
+                <p className="text-3xl font-bold text-green-600 dark:text-green-400">{totalGained}</p>
               </div>
-              <div className="bg-green-100 p-3 rounded-lg">
-                <TrendingUp className="w-8 h-8 text-green-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600 mb-1">Total Gastado</p>
-                <p className="text-3xl font-bold text-red-600">{totalSpent}</p>
-              </div>
-              <div className="bg-red-100 p-3 rounded-lg">
-                <TrendingDown className="w-8 h-8 text-red-600" />
+              <div className="bg-green-100 dark:bg-green-900/40 p-3 rounded-lg">
+                <TrendingUp className="w-8 h-8 text-green-600 dark:text-green-400" />
               </div>
             </div>
           </div>
@@ -127,11 +115,23 @@ export default function History() {
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Transacciones</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Total Gastado</p>
+                <p className="text-3xl font-bold text-red-600 dark:text-red-400">{totalSpent}</p>
+              </div>
+              <div className="bg-red-100 dark:bg-red-900/40 p-3 rounded-lg">
+                <TrendingDown className="w-8 h-8 text-red-600 dark:text-red-400" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Transacciones</p>
                 <p className="text-3xl font-bold text-gray-800 dark:text-white">{history.length}</p>
               </div>
-              <div className="bg-blue-100 p-3 rounded-lg">
-                <Filter className="w-8 h-8 text-blue-600" />
+              <div className="bg-blue-100 dark:bg-blue-900/40 p-3 rounded-lg">
+                <Filter className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
           </div>
@@ -176,7 +176,7 @@ export default function History() {
           </div>
 
           {filteredHistory.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">No hay transacciones que mostrar</p>
+            <p className="text-gray-500 dark:text-gray-400 text-center py-8">No hay transacciones que mostrar</p>
           ) : (
             <div className="space-y-2">
               {filteredHistory.map((entry) => {
@@ -186,7 +186,7 @@ export default function History() {
                 return (
                   <div
                     key={entry.id}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                   >
                     <div className="flex items-center gap-4 flex-1">
                       {entryUser?.photo_url ? (
@@ -203,7 +203,7 @@ export default function History() {
 
                       <div className="flex-1">
                         <p className="font-medium text-gray-800 dark:text-white">{entry.description}</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-sm text-gray-500 dark:text-gray-300">
                           {isCurrentUser ? 'Tú' : entryUser?.name || 'Usuario'} •{' '}
                           {new Date(entry.created_at).toLocaleDateString('es-ES', {
                             day: 'numeric',
@@ -218,7 +218,7 @@ export default function History() {
 
                     <span
                       className={`text-xl font-bold ${
-                        entry.type === 'gain' ? 'text-green-600' : 'text-red-600'
+                        entry.type === 'gain' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                       }`}
                     >
                       {entry.type === 'gain' ? '+' : '-'}
