@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, TrendingUp, Award, Trophy, MessageCircle } from 'lucide-react';
+import { Plus, TrendingUp, Award, Trophy } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { withSessionRefresh } from '../lib/supabaseWrapper';
 import { useAuth } from '../hooks/useAuth';
@@ -145,7 +145,7 @@ export default function Dashboard() {
             <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
               ¡Hola, {userProfile?.name}!
             </h1>
-            <p className="text-gray-600 dark:text-gray-300">Aquí está tu resumen de puntos</p>
+            <p className="text-gray-600 dark:text-gray-300">Reconociendo tu trabajo en casa</p>
           </div>
           <PointsBadge points={couple?.points || 0} />
         </div>
@@ -179,14 +179,6 @@ export default function Dashboard() {
               >
                 <Trophy className="w-6 h-6" />
                 <span className="font-semibold">Ver Logros</span>
-              </button>
-
-              <button
-                onClick={() => navigate('/chat')}
-                className="flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg"
-              >
-                <MessageCircle className="w-6 h-6" />
-                <span className="font-semibold">Chat</span>
               </button>
             </div>
 

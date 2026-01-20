@@ -196,7 +196,7 @@ export default function Rewards() {
           <div>
             <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">Recompensas</h1>
             <p className="text-gray-600 dark:text-gray-300">
-              {adminMode ? 'Administra el catálogo de recompensas' : 'Canjea tus puntos por momentos especiales'}
+              {adminMode ? 'Administra el catálogo de recompensas' : 'Canjea tus puntos por tiempo para ti'}
             </p>
           </div>
           <div className="flex items-center gap-3">

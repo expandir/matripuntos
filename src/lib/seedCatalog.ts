@@ -11,200 +11,207 @@ interface CatalogItemData {
 
 export const catalogActivities: CatalogItemData[] = [
   {
-    name: 'Desayuno en la cama',
-    description: 'Preparar un desayuno especial y llevarlo a la cama',
-    points_value: 20,
-    category: 'romantic',
-    icon: 'Coffee'
-  },
-  {
-    name: 'Mensaje de amor inesperado',
-    description: 'Enviar un mensaje romántico sin motivo especial',
-    points_value: 10,
-    category: 'romantic',
-    icon: 'Heart'
-  },
-  {
-    name: 'Abrazo de 30 segundos',
-    description: 'Dar un abrazo prolongado y sincero',
-    points_value: 5,
-    category: 'romantic',
-    icon: 'Heart'
-  },
-  {
-    name: 'Cita sorpresa',
-    description: 'Organizar una cita sin previo aviso',
-    points_value: 30,
-    category: 'romantic',
-    icon: 'Calendar'
-  },
-  {
-    name: 'Beso de buenos días',
-    description: 'Despertar a tu pareja con un beso',
-    points_value: 5,
-    category: 'romantic',
-    icon: 'Heart'
-  },
-  {
     name: 'Lavar los platos',
-    description: 'Lavar todos los platos sin que te lo pidan',
+    description: 'Lavar y secar todos los platos',
     points_value: 15,
     category: 'household',
     icon: 'Droplet'
   },
   {
-    name: 'Hacer la cama',
-    description: 'Ordenar completamente la habitación',
-    points_value: 10,
-    category: 'household',
-    icon: 'Home'
-  },
-  {
     name: 'Limpiar la cocina',
-    description: 'Dejar la cocina impecable',
+    description: 'Dejar la cocina limpia y ordenada',
     points_value: 20,
     category: 'household',
     icon: 'Sparkles'
   },
   {
-    name: 'Hacer la compra',
-    description: 'Ir al supermercado y hacer la compra completa',
+    name: 'Limpiar el baño',
+    description: 'Limpieza completa del baño',
     points_value: 25,
+    category: 'household',
+    icon: 'Droplet'
+  },
+  {
+    name: 'Hacer la compra',
+    description: 'Ir al supermercado y hacer la compra',
+    points_value: 30,
     category: 'household',
     icon: 'ShoppingBag'
   },
   {
     name: 'Sacar la basura',
-    description: 'Sacar toda la basura de la casa',
+    description: 'Sacar toda la basura de casa',
     points_value: 10,
     category: 'household',
     icon: 'Trash2'
   },
   {
-    name: 'Preparar la cena',
-    description: 'Cocinar una cena completa',
+    name: 'Hacer la colada',
+    description: 'Lavar, tender y recoger la ropa',
     points_value: 25,
+    category: 'household',
+    icon: 'Shirt'
+  },
+  {
+    name: 'Planchar',
+    description: 'Planchar la ropa acumulada',
+    points_value: 20,
+    category: 'household',
+    icon: 'Shirt'
+  },
+  {
+    name: 'Preparar desayuno',
+    description: 'Hacer el desayuno para la familia',
+    points_value: 15,
+    category: 'household',
+    icon: 'Coffee'
+  },
+  {
+    name: 'Preparar comida',
+    description: 'Cocinar la comida del mediodía',
+    points_value: 30,
     category: 'household',
     icon: 'Utensils'
   },
   {
-    name: 'Hacer ejercicio juntos',
-    description: 'Realizar al menos 30 minutos de actividad física',
+    name: 'Preparar cena',
+    description: 'Cocinar la cena',
+    points_value: 30,
+    category: 'household',
+    icon: 'Utensils'
+  },
+  {
+    name: 'Ordenar la casa',
+    description: 'Recoger y ordenar espacios comunes',
     points_value: 20,
-    category: 'health',
-    icon: 'Dumbbell'
+    category: 'household',
+    icon: 'Home'
   },
   {
-    name: 'Caminar 10,000 pasos',
-    description: 'Dar un paseo largo juntos',
-    points_value: 15,
-    category: 'health',
-    icon: 'Footprints'
+    name: 'Cuidado completo del bebé',
+    description: 'Hacerse cargo del bebé durante 3+ horas',
+    points_value: 40,
+    category: 'childcare',
+    icon: 'Baby'
   },
   {
-    name: 'Cocinar comida saludable',
-    description: 'Preparar una comida nutritiva juntos',
-    points_value: 20,
-    category: 'health',
-    icon: 'Apple'
-  },
-  {
-    name: 'Meditación en pareja',
-    description: '15 minutos de meditación o relajación juntos',
-    points_value: 15,
-    category: 'health',
-    icon: 'Cloud'
-  },
-  {
-    name: 'Dormir 8 horas',
-    description: 'Asegurar un descanso completo',
+    name: 'Cambiar pañales',
+    description: 'Cambiar pañales del bebé',
     points_value: 10,
-    category: 'health',
+    category: 'childcare',
+    icon: 'Baby'
+  },
+  {
+    name: 'Preparar lunch escolar',
+    description: 'Preparar comida para llevar al colegio',
+    points_value: 15,
+    category: 'childcare',
+    icon: 'Backpack'
+  },
+  {
+    name: 'Llevar al cole',
+    description: 'Llevar a los niños al colegio',
+    points_value: 20,
+    category: 'childcare',
+    icon: 'School'
+  },
+  {
+    name: 'Recoger del cole',
+    description: 'Recoger a los niños del colegio',
+    points_value: 20,
+    category: 'childcare',
+    icon: 'School'
+  },
+  {
+    name: 'Ayudar con deberes',
+    description: 'Supervisar y ayudar con tareas escolares',
+    points_value: 25,
+    category: 'childcare',
+    icon: 'BookOpen'
+  },
+  {
+    name: 'Rutina de baño',
+    description: 'Bañar a los niños',
+    points_value: 20,
+    category: 'childcare',
+    icon: 'Bath'
+  },
+  {
+    name: 'Rutina de dormir',
+    description: 'Acostar a los niños (cuento incluido)',
+    points_value: 25,
+    category: 'childcare',
     icon: 'Moon'
   },
   {
-    name: 'Jugar videojuegos juntos',
-    description: 'Sesión de videojuegos en pareja',
-    points_value: 15,
-    category: 'fun',
-    icon: 'Gamepad2'
+    name: 'Llevar al médico',
+    description: 'Llevar a los niños a cita médica',
+    points_value: 35,
+    category: 'childcare',
+    icon: 'Stethoscope'
   },
   {
-    name: 'Ver una película',
-    description: 'Disfrutar de una película juntos',
-    points_value: 15,
-    category: 'fun',
-    icon: 'Film'
-  },
-  {
-    name: 'Karaoke casero',
-    description: 'Cantar canciones favoritas juntos',
-    points_value: 20,
-    category: 'fun',
+    name: 'Actividad extraescolar',
+    description: 'Llevar/recoger de actividades',
+    points_value: 25,
+    category: 'childcare',
     icon: 'Music'
   },
   {
-    name: 'Bailar una canción',
-    description: 'Bailar al menos una canción completa',
-    points_value: 10,
-    category: 'fun',
-    icon: 'Music'
-  },
-  {
-    name: 'Hacer un puzzle',
-    description: 'Completar un puzzle juntos',
-    points_value: 25,
-    category: 'fun',
-    icon: 'Puzzle'
-  },
-  {
-    name: 'Noche de juegos de mesa',
-    description: 'Jugar juegos de mesa durante al menos 1 hora',
+    name: 'Gestionar calendario familiar',
+    description: 'Organizar agenda y citas de la familia',
     points_value: 20,
-    category: 'fun',
-    icon: 'Dices'
+    category: 'management',
+    icon: 'Calendar'
   },
   {
-    name: 'Regalo sorpresa',
-    description: 'Dar un pequeño regalo inesperado',
-    points_value: 25,
-    category: 'surprise',
-    icon: 'Gift'
+    name: 'Pagar facturas',
+    description: 'Gestionar y pagar facturas pendientes',
+    points_value: 20,
+    category: 'management',
+    icon: 'CreditCard'
   },
   {
-    name: 'Nota de amor escondida',
-    description: 'Esconder una nota romántica para que la encuentre',
-    points_value: 15,
-    category: 'surprise',
+    name: 'Gestiones administrativas',
+    description: 'Trámites, papeleos, llamadas oficiales',
+    points_value: 30,
+    category: 'management',
     icon: 'FileText'
   },
   {
-    name: 'Postre favorito',
-    description: 'Preparar o comprar el postre favorito de tu pareja',
-    points_value: 20,
-    category: 'surprise',
-    icon: 'IceCream'
+    name: 'Organizar cumpleaños',
+    description: 'Planificar fiesta de cumpleaños',
+    points_value: 40,
+    category: 'management',
+    icon: 'PartyPopper'
   },
   {
-    name: 'Cumplido sincero',
-    description: 'Dar un cumplido genuino y específico',
-    points_value: 5,
-    category: 'surprise',
-    icon: 'MessageCircle'
-  },
-  {
-    name: 'Masaje de 10 minutos',
-    description: 'Dar un masaje relajante',
-    points_value: 20,
-    category: 'surprise',
-    icon: 'Hand'
-  },
-  {
-    name: 'Flores sin motivo',
-    description: 'Traer flores sin que sea una ocasión especial',
+    name: 'Comprar regalos',
+    description: 'Comprar regalos para eventos familiares',
     points_value: 25,
-    category: 'surprise',
-    icon: 'Flower2'
+    category: 'management',
+    icon: 'Gift'
+  },
+  {
+    name: 'Mantenimiento del hogar',
+    description: 'Pequeñas reparaciones o gestionar averías',
+    points_value: 30,
+    category: 'management',
+    icon: 'Wrench'
+  },
+  {
+    name: 'Revisar coche',
+    description: 'Llevar coche a revisión o mantenimiento',
+    points_value: 30,
+    category: 'management',
+    icon: 'Car'
+  },
+  {
+    name: 'Tiempo personal',
+    description: 'Dar tiempo libre a tu pareja sin interrupciones',
+    points_value: 35,
+    category: 'self_care',
+    icon: 'Smile'
   }
 ];
 

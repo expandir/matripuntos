@@ -66,7 +66,7 @@ export default function Login() {
           </h1>
 
           <p className="text-center text-gray-600 dark:text-gray-300 mb-8">
-            Gana puntos por cuidar a tu pareja y canjéalos por momentos especiales
+            Reconoce y balancea las tareas del hogar. Gana tiempo para ti.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -147,7 +147,7 @@ export default function Login() {
           </div>
 
           <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
-            Conecta con tu pareja y comienza a ganar puntos juntos
+            Sistema de reconocimiento justo para parejas y familias
           </p>
         </div>
       </div>

@@ -47,7 +47,7 @@ export interface WeeklyChallenge {
   created_at: string;
 }
 
-export type CatalogCategory = 'romantic' | 'household' | 'health' | 'fun' | 'surprise';
+export type CatalogCategory = 'household' | 'childcare' | 'management' | 'self_care';
 
 export interface CatalogItem {
   id: string;

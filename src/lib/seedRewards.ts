@@ -2,215 +2,145 @@ import { supabase } from './supabase';
 
 export const initialRewards = [
   {
-    name: 'Tarde libre (3h)',
-    description: 'Tarde libre para lo que quieras',
-    points_cost: 30,
+    name: '2 horas de tiempo libre',
+    description: 'Tiempo para ti sin interrupciones',
+    points_cost: 25,
     image_url: 'https://images.pexels.com/photos/1405870/pexels-photo-1405870.jpeg?auto=compress&cs=tinysrgb&w=800',
+    icon: 'Clock'
+  },
+  {
+    name: '3 horas de tiempo libre',
+    description: 'Tiempo personal para hacer lo que quieras',
+    points_cost: 35,
+    image_url: 'https://images.pexels.com/photos/1109197/pexels-photo-1109197.jpeg?auto=compress&cs=tinysrgb&w=800',
+    icon: 'Clock'
+  },
+  {
+    name: 'Mañana libre (4h)',
+    description: 'Mañana completa para ti',
+    points_cost: 45,
+    image_url: 'https://images.pexels.com/photos/851213/pexels-photo-851213.jpeg?auto=compress&cs=tinysrgb&w=800',
+    icon: 'Sunrise'
+  },
+  {
+    name: 'Tarde libre completa (5h)',
+    description: 'Toda la tarde sin responsabilidades',
+    points_cost: 55,
+    image_url: 'https://images.pexels.com/photos/1449791/pexels-photo-1449791.jpeg?auto=compress&cs=tinysrgb&w=800',
     icon: 'Sun'
   },
   {
-    name: 'Masaje de 30 min',
-    description: 'Masaje relajante de 30 minutos',
-    points_cost: 25,
-    image_url: 'https://images.pexels.com/photos/3757952/pexels-photo-3757952.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Waves'
-  },
-  {
-    name: 'Cena hecha por la otra persona',
-    description: 'Cena casera preparada por tu pareja',
-    points_cost: 20,
-    image_url: 'https://images.pexels.com/photos/1640774/pexels-photo-1640774.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Utensils'
-  },
-  {
-    name: 'Noche de cine',
-    description: 'Película y palomitas a elegir',
-    points_cost: 15,
-    image_url: 'https://images.pexels.com/photos/7991158/pexels-photo-7991158.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Popcorn'
-  },
-  {
-    name: 'Desayuno en la cama',
-    description: 'Desayuno sorpresa en la cama',
-    points_cost: 12,
-    image_url: 'https://images.pexels.com/photos/5864266/pexels-photo-5864266.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Coffee'
-  },
-  {
-    name: 'Sin tareas domésticas (1 día)',
-    description: 'La otra persona se hace cargo de las tareas',
-    points_cost: 18,
-    image_url: 'https://images.pexels.com/photos/4239091/pexels-photo-4239091.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Home'
-  },
-  {
-    name: 'Paseo romántico',
-    description: 'Salida de pareja sin prisas',
-    points_cost: 10,
-    image_url: 'https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Footprints'
-  },
-  {
-    name: 'Fin de semana sin niños',
-    description: 'Cuidado de la niña por parte de la otra persona',
-    points_cost: 60,
+    name: 'Día completo libre',
+    description: 'Todo el día para ti',
+    points_cost: 90,
     image_url: 'https://images.pexels.com/photos/1659438/pexels-photo-1659438.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'TreePalm'
+    icon: 'Calendar'
   },
   {
-    name: 'Masaje + cena rápida',
-    description: 'Combo relajación',
-    points_cost: 40,
-    image_url: 'https://images.pexels.com/photos/3997991/pexels-photo-3997991.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Gem'
+    name: 'Fin de semana libre',
+    description: 'Sábado y domingo completos libres',
+    points_cost: 150,
+    image_url: 'https://images.pexels.com/photos/346529/pexels-photo-346529.jpeg?auto=compress&cs=tinysrgb&w=800',
+    icon: 'CalendarDays'
   },
   {
-    name: 'Playlist personalizada',
-    description: 'Playlist hecha por tu pareja',
-    points_cost: 8,
-    image_url: 'https://images.pexels.com/photos/165971/pexels-photo-165971.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Music'
-  },
-  {
-    name: 'Regalo sorpresa pequeño',
-    description: 'Detalle comprado o hecho a mano',
-    points_cost: 22,
-    image_url: 'https://images.pexels.com/photos/264960/pexels-photo-264960.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Gift'
-  },
-  {
-    name: 'Clase de baile juntos',
-    description: 'Una clase para los dos',
-    points_cost: 45,
-    image_url: 'https://images.pexels.com/photos/8520617/pexels-photo-8520617.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'PartyPopper'
-  },
-  {
-    name: 'Día de desconexión',
-    description: 'Día enfocado a la pareja sin móviles',
-    points_cost: 35,
-    image_url: 'https://images.pexels.com/photos/1449791/pexels-photo-1449791.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Cloud'
-  },
-  {
-    name: 'Tarde de juegos',
-    description: 'Juegos de mesa o videojuegos juntos',
-    points_cost: 12,
-    image_url: 'https://images.pexels.com/photos/3394347/pexels-photo-3394347.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Gamepad2'
-  },
-  {
-    name: 'Carta romántica',
-    description: 'Carta escrita a mano',
-    points_cost: 6,
-    image_url: 'https://images.pexels.com/photos/6372459/pexels-photo-6372459.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'ScrollText'
-  },
-  {
-    name: 'Sesión de fotos casera',
-    description: 'Fotos espontáneas de pareja',
-    points_cost: 14,
-    image_url: 'https://images.pexels.com/photos/1983037/pexels-photo-1983037.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Camera'
-  },
-  {
-    name: 'Plan sorpresa',
-    description: 'Sorpresa organizada por tu pareja',
-    points_cost: 28,
-    image_url: 'https://images.pexels.com/photos/1303082/pexels-photo-1303082.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Star'
-  },
-  {
-    name: 'Cocinar juntos',
-    description: 'Cocinar juntos una receta especial',
-    points_cost: 10,
-    image_url: 'https://images.pexels.com/photos/3184192/pexels-photo-3184192.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'ChefHat'
-  },
-  {
-    name: 'Noche sin responsabilidades',
-    description: 'Cuidado de la niña por la otra persona',
-    points_cost: 40,
+    name: 'Dormir hasta tarde',
+    description: 'Despertar sin despertador ni responsabilidades',
+    points_cost: 20,
     image_url: 'https://images.pexels.com/photos/1183828/pexels-photo-1183828.jpeg?auto=compress&cs=tinysrgb&w=800',
     icon: 'Moon'
   },
   {
-    name: 'Día de spa en casa',
-    description: 'Espacio acondicionado para relajarse en casa',
-    points_cost: 32,
-    image_url: 'https://images.pexels.com/photos/3865906/pexels-photo-3865906.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Bath'
+    name: 'Siesta tranquila',
+    description: 'Tiempo para descansar sin interrupciones',
+    points_cost: 15,
+    image_url: 'https://images.pexels.com/photos/3771069/pexels-photo-3771069.jpeg?auto=compress&cs=tinysrgb&w=800',
+    icon: 'CloudMoon'
   },
   {
-    name: 'Carta de agradecimiento pública',
-    description: 'Agradecimiento en redes o a familia',
-    points_cost: 5,
-    image_url: 'https://images.pexels.com/photos/2072165/pexels-photo-2072165.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'MailOpen'
+    name: 'Salir con amigos',
+    description: 'Tiempo para salir con tus amistades',
+    points_cost: 40,
+    image_url: 'https://images.pexels.com/photos/1267696/pexels-photo-1267696.jpeg?auto=compress&cs=tinysrgb&w=800',
+    icon: 'Users'
   },
   {
-    name: 'Lista de tareas organizada',
-    description: 'La otra persona organiza la lista',
-    points_cost: 7,
-    image_url: 'https://images.pexels.com/photos/4226140/pexels-photo-4226140.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'ClipboardList'
-  },
-  {
-    name: 'Paseo en bici',
-    description: 'Paseo corto en bici juntos',
-    points_cost: 9,
-    image_url: 'https://images.pexels.com/photos/1571440/pexels-photo-1571440.jpeg?auto=compress&cs=tinysrgb&w=800',
+    name: 'Deporte o actividad personal',
+    description: 'Tiempo para tu actividad deportiva favorita',
+    points_cost: 30,
+    image_url: 'https://images.pexels.com/photos/235922/pexels-photo-235922.jpeg?auto=compress&cs=tinysrgb&w=800',
     icon: 'Bike'
   },
   {
-    name: 'Cita sorpresa en casa',
-    description: 'Cena y ambiente sorpresa en casa',
-    points_cost: 26,
-    image_url: 'https://images.pexels.com/photos/3171201/pexels-photo-3171201.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Heart'
+    name: 'Ir al gimnasio',
+    description: 'Tiempo para ir al gym tranquilamente',
+    points_cost: 25,
+    image_url: 'https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg?auto=compress&cs=tinysrgb&w=800',
+    icon: 'Dumbbell'
   },
   {
-    name: 'Clase de instrumento',
-    description: 'Lección de ukulele o guitarra básica',
+    name: 'Ir de compras solo/a',
+    description: 'Tiempo para ir de compras sin prisas',
+    points_cost: 35,
+    image_url: 'https://images.pexels.com/photos/972995/pexels-photo-972995.jpeg?auto=compress&cs=tinysrgb&w=800',
+    icon: 'ShoppingBag'
+  },
+  {
+    name: 'Leer tranquilamente',
+    description: 'Tiempo ininterrumpido para leer',
     points_cost: 20,
-    image_url: 'https://images.pexels.com/photos/1751731/pexels-photo-1751731.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Guitar'
-  },
-  {
-    name: 'Elección de película',
-    description: 'Tu pareja cede la elección',
-    points_cost: 6,
-    image_url: 'https://images.pexels.com/photos/7991319/pexels-photo-7991319.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Film'
-  },
-  {
-    name: 'Tarde de lectura juntos',
-    description: 'Ambos leen y comparten',
-    points_cost: 8,
     image_url: 'https://images.pexels.com/photos/4866020/pexels-photo-4866020.jpeg?auto=compress&cs=tinysrgb&w=800',
     icon: 'Book'
   },
   {
-    name: 'Spa profesional',
-    description: 'Visita a spa (coste adicional)',
-    points_cost: 100,
-    image_url: 'https://images.pexels.com/photos/3757959/pexels-photo-3757959.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'Crown'
+    name: 'Ver series o películas',
+    description: 'Tiempo para maratonear sin interrupciones',
+    points_cost: 25,
+    image_url: 'https://images.pexels.com/photos/7991158/pexels-photo-7991158.jpeg?auto=compress&cs=tinysrgb&w=800',
+    icon: 'Tv'
   },
   {
-    name: 'Día de hobbies',
-    description: 'Dedicación a tu hobby sin interrupciones',
-    points_cost: 22,
+    name: 'Hobby personal',
+    description: 'Tiempo dedicado a tu hobby',
+    points_cost: 30,
     image_url: 'https://images.pexels.com/photos/1109197/pexels-photo-1109197.jpeg?auto=compress&cs=tinysrgb&w=800',
     icon: 'Star'
   },
   {
-    name: 'Cena fuera',
-    description: 'Salir a cenar a un lugar asequible',
-    points_cost: 55,
-    image_url: 'https://images.pexels.com/photos/1307698/pexels-photo-1307698.jpeg?auto=compress&cs=tinysrgb&w=800',
-    icon: 'UtensilsCrossed'
+    name: 'Ir al spa o masaje',
+    description: 'Tiempo para autocuidado profesional',
+    points_cost: 80,
+    image_url: 'https://images.pexels.com/photos/3757952/pexels-photo-3757952.jpeg?auto=compress&cs=tinysrgb&w=800',
+    icon: 'Sparkles'
   },
+  {
+    name: 'Ir a la peluquería',
+    description: 'Tiempo para cuidado personal',
+    points_cost: 30,
+    image_url: 'https://images.pexels.com/photos/3065209/pexels-photo-3065209.jpeg?auto=compress&cs=tinysrgb&w=800',
+    icon: 'Scissors'
+  },
+  {
+    name: 'Trabajar en proyecto personal',
+    description: 'Tiempo sin interrupciones para tus proyectos',
+    points_cost: 40,
+    image_url: 'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=800',
+    icon: 'Lightbulb'
+  },
+  {
+    name: 'Pasear sin rumbo',
+    description: 'Tiempo para caminar y desconectar',
+    points_cost: 20,
+    image_url: 'https://images.pexels.com/photos/1024993/pexels-photo-1024993.jpeg?auto=compress&cs=tinysrgb&w=800',
+    icon: 'Footprints'
+  },
+  {
+    name: 'Día sin tareas domésticas',
+    description: 'La otra persona se hace cargo de todo',
+    points_cost: 50,
+    image_url: 'https://images.pexels.com/photos/4239091/pexels-photo-4239091.jpeg?auto=compress&cs=tinysrgb&w=800',
+    icon: 'Home'
+  }
 ];
 
 export async function seedRewardsForCouple(coupleId: string) {
