@@ -15,19 +15,17 @@ interface PointsCatalogProps {
 }
 
 const categoryColors = {
-  romantic: 'bg-pink-100 dark:bg-pink-900 text-pink-600 dark:text-pink-400',
   household: 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400',
-  health: 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400',
-  fun: 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400',
-  surprise: 'bg-orange-100 dark:bg-orange-900 text-orange-600 dark:text-orange-400',
+  childcare: 'bg-pink-100 dark:bg-pink-900 text-pink-600 dark:text-pink-400',
+  management: 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400',
+  self_care: 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400',
 };
 
 const categoryNames = {
-  romantic: 'Romántico',
   household: 'Hogar',
-  health: 'Salud',
-  fun: 'Diversión',
-  surprise: 'Sorpresa',
+  childcare: 'Cuidado infantil',
+  management: 'Gestión',
+  self_care: 'Autocuidado',
 };
 
 export default function PointsCatalog({ coupleId, userId, onActivityComplete }: PointsCatalogProps) {
