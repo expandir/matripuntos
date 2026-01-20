@@ -194,9 +194,9 @@ export default function Rewards() {
       <main className="max-w-7xl mx-auto px-4 py-6">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">Catálogo de Recompensas</h1>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">Premios</h1>
             <p className="text-gray-600 dark:text-gray-300">
-              {adminMode ? 'Administra el catálogo de recompensas' : 'Canjea tus puntos por momentos especiales'}
+              {adminMode ? 'Administra el catálogo de premios' : 'Canjea tus puntos por momentos especiales'}
             </p>
           </div>
           <div className="flex items-center gap-3">

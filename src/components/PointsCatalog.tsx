@@ -152,7 +152,7 @@ export default function PointsCatalog({ coupleId, userId, onActivityComplete }: 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-gray-800 dark:text-white">Catálogo de Actividades</h3>
+        <h3 className="font-semibold text-gray-800 dark:text-white">Ganar Puntos</h3>
         <span className="text-sm text-gray-600 dark:text-gray-400">
           {filteredItems.length} actividades
         </span>
@@ -226,7 +226,7 @@ export default function PointsCatalog({ coupleId, userId, onActivityComplete }: 
                     }}
                     className="mt-3 w-full px-4 py-2 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white text-sm font-medium rounded-lg transition-all duration-200 transform hover:scale-[1.02]"
                   >
-                    Completar actividad
+                    Registrar y ganar puntos
                   </button>
                 </div>
               </div>
