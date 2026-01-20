@@ -183,6 +183,5 @@ export async function sendTestNotification(): Promise<void> {
     body: 'Las notificaciones están funcionando correctamente',
     icon: '/icon-192.png',
     badge: '/icon-96.png',
-    vibrate: [200, 100, 200],
   });
 }
