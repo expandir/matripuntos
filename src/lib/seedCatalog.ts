@@ -88,6 +88,34 @@ export const catalogActivities: CatalogItemData[] = [
     icon: 'Home'
   },
   {
+    name: 'Aspirar y fregar',
+    description: 'Aspirar y fregar el suelo de toda la casa',
+    points_value: 30,
+    category: 'household',
+    icon: 'Wind'
+  },
+  {
+    name: 'Limpiar ventanas',
+    description: 'Limpiar cristales y ventanas',
+    points_value: 25,
+    category: 'household',
+    icon: 'Square'
+  },
+  {
+    name: 'Cambiar sábanas',
+    description: 'Cambiar y poner sábanas limpias',
+    points_value: 15,
+    category: 'household',
+    icon: 'Bed'
+  },
+  {
+    name: 'Regar plantas',
+    description: 'Cuidar y regar las plantas del hogar',
+    points_value: 10,
+    category: 'household',
+    icon: 'Leaf'
+  },
+  {
     name: 'Cuidado completo del bebé',
     description: 'Hacerse cargo del bebé durante 3+ horas',
     points_value: 40,
@@ -158,6 +186,62 @@ export const catalogActivities: CatalogItemData[] = [
     icon: 'Music'
   },
   {
+    name: 'Alimentar bebé',
+    description: 'Dar comida o biberón al bebé',
+    points_value: 15,
+    category: 'childcare',
+    icon: 'UtensilsCrossed'
+  },
+  {
+    name: 'Jugar con los niños',
+    description: 'Tiempo de juego y entretenimiento',
+    points_value: 20,
+    category: 'childcare',
+    icon: 'Gamepad2'
+  },
+  {
+    name: 'Calmar rabietas',
+    description: 'Gestionar y calmar momentos difíciles',
+    points_value: 30,
+    category: 'childcare',
+    icon: 'Heart'
+  },
+  {
+    name: 'Preparar mochila escolar',
+    description: 'Organizar material y mochila del día siguiente',
+    points_value: 10,
+    category: 'childcare',
+    icon: 'Backpack'
+  },
+  {
+    name: 'Lavar y cortar uñas',
+    description: 'Higiene personal de los niños',
+    points_value: 15,
+    category: 'childcare',
+    icon: 'Scissors'
+  },
+  {
+    name: 'Leer cuentos',
+    description: 'Tiempo de lectura con los niños',
+    points_value: 15,
+    category: 'childcare',
+    icon: 'BookOpen'
+  },
+  {
+    name: 'Vigilar siesta',
+    description: 'Supervisar hora de la siesta',
+    points_value: 20,
+    category: 'childcare',
+    icon: 'BedDouble'
+  },
+  {
+    name: 'Llevar al parque',
+    description: 'Tiempo al aire libre con los niños',
+    points_value: 25,
+    category: 'childcare',
+    icon: 'Trees'
+  },
+  {
     name: 'Gestionar calendario familiar',
     description: 'Organizar agenda y citas de la familia',
     points_value: 20,
@@ -207,11 +291,144 @@ export const catalogActivities: CatalogItemData[] = [
     icon: 'Car'
   },
   {
+    name: 'Planificar menú semanal',
+    description: 'Organizar comidas de la semana',
+    points_value: 20,
+    category: 'management',
+    icon: 'ClipboardList'
+  },
+  {
+    name: 'Gestionar reservas',
+    description: 'Reservar restaurantes, viajes, citas',
+    points_value: 15,
+    category: 'management',
+    icon: 'Calendar'
+  },
+  {
+    name: 'Revisar seguros',
+    description: 'Gestionar pólizas y seguros familiares',
+    points_value: 30,
+    category: 'management',
+    icon: 'Shield'
+  },
+  {
+    name: 'Organizar fotos familiares',
+    description: 'Ordenar y clasificar fotos y recuerdos',
+    points_value: 25,
+    category: 'management',
+    icon: 'Image'
+  },
+  {
+    name: 'Gestionar suscripciones',
+    description: 'Revisar y gestionar servicios contratados',
+    points_value: 15,
+    category: 'management',
+    icon: 'CreditCard'
+  },
+  {
+    name: 'Llamadas médicas',
+    description: 'Pedir citas y gestionar consultas',
+    points_value: 20,
+    category: 'management',
+    icon: 'Phone'
+  },
+  {
+    name: 'Organizar armarios',
+    description: 'Revisar y organizar ropa de temporada',
+    points_value: 35,
+    category: 'management',
+    icon: 'Package'
+  },
+  {
     name: 'Tiempo personal',
     description: 'Dar tiempo libre a tu pareja sin interrupciones',
     points_value: 35,
     category: 'self_care',
     icon: 'Smile'
+  },
+  {
+    name: 'Masaje relajante',
+    description: 'Dar un masaje a tu pareja',
+    points_value: 30,
+    category: 'self_care',
+    icon: 'Heart'
+  },
+  {
+    name: 'Preparar baño relajante',
+    description: 'Preparar un baño especial con velas',
+    points_value: 25,
+    category: 'self_care',
+    icon: 'Bath'
+  },
+  {
+    name: 'Dejar dormir extra',
+    description: 'Encargarse de todo para que duerma más',
+    points_value: 40,
+    category: 'self_care',
+    icon: 'Moon'
+  },
+  {
+    name: 'Sorpresa romántica',
+    description: 'Planificar detalle o sorpresa especial',
+    points_value: 35,
+    category: 'self_care',
+    icon: 'Sparkles'
+  },
+  {
+    name: 'Cita sorpresa',
+    description: 'Organizar una cita sin que tenga que planificar',
+    points_value: 45,
+    category: 'self_care',
+    icon: 'PartyPopper'
+  },
+  {
+    name: 'Escuchar activamente',
+    description: 'Tiempo de conversación profunda sin distracciones',
+    points_value: 25,
+    category: 'self_care',
+    icon: 'MessageCircle'
+  },
+  {
+    name: 'Apoyo emocional',
+    description: 'Estar presente en momento difícil',
+    points_value: 30,
+    category: 'self_care',
+    icon: 'HeartHandshake'
+  },
+  {
+    name: 'Elogios sinceros',
+    description: 'Expresar aprecio y reconocimiento',
+    points_value: 20,
+    category: 'self_care',
+    icon: 'Star'
+  },
+  {
+    name: 'Tarde libre completa',
+    description: 'Hacerse cargo de todo para tarde libre',
+    points_value: 50,
+    category: 'self_care',
+    icon: 'Sun'
+  },
+  {
+    name: 'Desayuno en la cama',
+    description: 'Preparar y servir desayuno especial',
+    points_value: 30,
+    category: 'self_care',
+    icon: 'Coffee'
+  },
+  {
+    name: 'Plan sin niños',
+    description: 'Organizar salida solo para pareja',
+    points_value: 45,
+    category: 'self_care',
+    icon: 'Heart'
+  },
+  {
+    name: 'Noche de películas',
+    description: 'Preparar ambiente perfecto para cine en casa',
+    points_value: 25,
+    category: 'self_care',
+    icon: 'Tv'
   }
 ];
 
