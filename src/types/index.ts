@@ -10,6 +10,7 @@ export interface User {
 export interface Couple {
   id: string;
   points: number;
+  requires_validation: boolean;
   created_at: string;
 }
 
@@ -65,4 +66,15 @@ export interface CatalogCompletion {
   user_id: string;
   catalog_item_id: string;
   completed_at: string;
+}
+
+export interface PendingPoints {
+  id: string;
+  couple_id: string;
+  user_id: string;
+  points: number;
+  description: string;
+  catalog_item_id?: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at: string;
 }

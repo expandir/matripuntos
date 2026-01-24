@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import * as Icons from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { ensureSession } from '../lib/sessionHelper';
-import { CatalogItem, CatalogCategory } from '../types';
+import { CatalogItem, CatalogCategory, Couple } from '../types';
 import toast from 'react-hot-toast';
 import ConfirmDialog from './ConfirmDialog';
 import { checkAndUnlockAchievements } from '../lib/achievementsService';
@@ -11,6 +11,7 @@ import { checkAndUnlockAchievements } from '../lib/achievementsService';
 interface PointsCatalogProps {
   coupleId: string;
   userId: string;
+  couple: Couple;
   onActivityComplete: () => void;
 }
 
@@ -28,7 +29,7 @@ const categoryNames = {
   self_care: 'Autocuidado',
 };
 
-export default function PointsCatalog({ coupleId, userId, onActivityComplete }: PointsCatalogProps) {
+export default function PointsCatalog({ coupleId, userId, couple, onActivityComplete }: PointsCatalogProps) {
   const navigate = useNavigate();
   const [catalogItems, setCatalogItems] = useState<CatalogItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,46 +65,63 @@ export default function PointsCatalog({ coupleId, userId, onActivityComplete }: 
     try {
       await ensureSession();
 
-      const { data: couple, error: coupleReadError } = await supabase
-        .from('couples')
-        .select('points')
-        .eq('id', coupleId)
-        .single();
+      if (couple.requires_validation) {
+        const { error: pendingError } = await supabase
+          .from('pending_points')
+          .insert({
+            couple_id: coupleId,
+            user_id: userId,
+            points: selectedItem.points_value,
+            description: selectedItem.name,
+            catalog_item_id: selectedItem.id,
+            status: 'pending',
+          });
 
-      if (coupleReadError) throw coupleReadError;
+        if (pendingError) throw pendingError;
 
-      const { error: completionError } = await supabase
-        .from('catalog_completions')
-        .insert({
-          couple_id: coupleId,
-          user_id: userId,
-          catalog_item_id: selectedItem.id,
+        const { error: completionError } = await supabase
+          .from('catalog_completions')
+          .insert({
+            couple_id: coupleId,
+            user_id: userId,
+            catalog_item_id: selectedItem.id,
+          });
+
+        if (completionError) throw completionError;
+
+        toast.success('Actividad enviada para validación');
+      } else {
+        const { error: completionError } = await supabase
+          .from('catalog_completions')
+          .insert({
+            couple_id: coupleId,
+            user_id: userId,
+            catalog_item_id: selectedItem.id,
+          });
+
+        if (completionError) throw completionError;
+
+        const { error: coupleError } = await supabase.rpc('add_points', {
+          p_couple_id: coupleId,
+          p_amount: selectedItem.points_value,
         });
 
-      if (completionError) throw completionError;
+        if (coupleError) throw coupleError;
 
-      const { error: coupleError } = await supabase
-        .from('couples')
-        .update({
-          points: couple.points + selectedItem.points_value,
-        })
-        .eq('id', coupleId);
+        const { error: historyError } = await supabase.from('history').insert({
+          couple_id: coupleId,
+          user_id: userId,
+          points: selectedItem.points_value,
+          type: 'gain',
+          description: selectedItem.name,
+        });
 
-      if (coupleError) throw coupleError;
+        if (historyError) throw historyError;
 
-      const { error: historyError } = await supabase.from('history').insert({
-        couple_id: coupleId,
-        user_id: userId,
-        points: selectedItem.points_value,
-        type: 'gain',
-        description: selectedItem.name,
-      });
+        toast.success(`¡Actividad completada! +${selectedItem.points_value} puntos`);
 
-      if (historyError) throw historyError;
-
-      toast.success(`¡Actividad completada! +${selectedItem.points_value} puntos`);
-
-      checkAndUnlockAchievements(userId);
+        checkAndUnlockAchievements(userId);
+      }
 
       onActivityComplete();
       setShowConfirm(false);

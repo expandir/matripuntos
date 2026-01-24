@@ -5,15 +5,17 @@ import { supabase } from '../lib/supabase';
 import { ensureSession } from '../lib/sessionHelper';
 import toast from 'react-hot-toast';
 import { checkAndUnlockAchievements } from '../lib/achievementsService';
+import { Couple } from '../types';
 
 interface AddPointsModalProps {
   coupleId: string;
   userId: string;
+  couple: Couple;
   onClose: () => void;
   onSuccess: () => void;
 }
 
-export default function AddPointsModal({ coupleId, userId, onClose, onSuccess }: AddPointsModalProps) {
+export default function AddPointsModal({ coupleId, userId, couple, onClose, onSuccess }: AddPointsModalProps) {
   const navigate = useNavigate();
   const [points, setPoints] = useState(5);
   const [description, setDescription] = useState('');
@@ -31,36 +33,45 @@ export default function AddPointsModal({ coupleId, userId, onClose, onSuccess }:
 
     try {
       await ensureSession();
-      const { data: couple } = await supabase
-        .from('couples')
-        .select('points')
-        .eq('id', coupleId)
-        .single();
 
-      if (!couple) throw new Error('Couple not found');
+      if (couple.requires_validation) {
+        const { error: pendingError } = await supabase
+          .from('pending_points')
+          .insert({
+            couple_id: coupleId,
+            user_id: userId,
+            points: points,
+            description: description.trim(),
+            status: 'pending',
+          });
 
-      const { error: historyError } = await supabase
-        .from('history')
-        .insert({
-          couple_id: coupleId,
-          user_id: userId,
-          points: points,
-          type: 'gain',
-          description: description.trim(),
+        if (pendingError) throw pendingError;
+
+        toast.success('Puntos enviados para validación');
+      } else {
+        const { error: historyError } = await supabase
+          .from('history')
+          .insert({
+            couple_id: coupleId,
+            user_id: userId,
+            points: points,
+            type: 'gain',
+            description: description.trim(),
+          });
+
+        if (historyError) throw historyError;
+
+        const { error: updateError } = await supabase.rpc('add_points', {
+          p_couple_id: coupleId,
+          p_amount: points,
         });
 
-      if (historyError) throw historyError;
+        if (updateError) throw updateError;
 
-      const { error: updateError } = await supabase
-        .from('couples')
-        .update({ points: couple.points + points })
-        .eq('id', coupleId);
+        toast.success(`+${points} puntos añadidos`);
 
-      if (updateError) throw updateError;
-
-      toast.success(`+${points} puntos añadidos`);
-
-      checkAndUnlockAchievements(userId);
+        checkAndUnlockAchievements(userId);
+      }
 
       onSuccess();
       onClose();

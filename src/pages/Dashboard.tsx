@@ -10,6 +10,7 @@ import PointsBadge from '../components/PointsBadge';
 import AddPointsModal from '../components/AddPointsModal';
 import WeeklyChallenges from '../components/WeeklyChallenges';
 import PointsCatalog from '../components/PointsCatalog';
+import PendingValidation from '../components/PendingValidation';
 import toast from 'react-hot-toast';
 
 export default function Dashboard() {
@@ -248,22 +249,39 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-          <PointsCatalog
-            coupleId={userProfile!.couple_id!}
-            userId={user!.id}
-            onActivityComplete={() => {
-              loadCoupleData();
-              loadRecentHistory();
-            }}
-          />
-        </div>
+        {couple?.requires_validation && (
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <PendingValidation
+              coupleId={userProfile!.couple_id!}
+              currentUserId={user!.id}
+              onPointsValidated={() => {
+                loadCoupleData();
+                loadRecentHistory();
+              }}
+            />
+          </div>
+        )}
+
+        {couple && (
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+            <PointsCatalog
+              coupleId={userProfile!.couple_id!}
+              userId={user!.id}
+              couple={couple}
+              onActivityComplete={() => {
+                loadCoupleData();
+                loadRecentHistory();
+              }}
+            />
+          </div>
+        )}
       </main>
 
-      {showAddModal && userProfile && (
+      {showAddModal && userProfile && couple && (
         <AddPointsModal
           coupleId={userProfile.couple_id!}
           userId={user!.id}
+          couple={couple}
           onClose={() => setShowAddModal(false)}
           onSuccess={() => {
             loadCoupleData();

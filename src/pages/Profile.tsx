@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Mail, Calendar, Users, Award, KeyRound, X } from 'lucide-react';
+import { LogOut, Mail, Calendar, Users, Award, KeyRound, X, ShieldCheck } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { withSessionRefresh } from '../lib/supabaseWrapper';
 import { useAuth } from '../hooks/useAuth';
-import { User } from '../types';
+import { User, Couple } from '../types';
 import Header from '../components/Header';
 import NotificationSettings from '../components/NotificationSettings';
 import toast from 'react-hot-toast';
@@ -13,6 +13,7 @@ export default function Profile() {
   const { user, userProfile, signOut } = useAuth();
   const navigate = useNavigate();
   const [partner, setPartner] = useState<User | null>(null);
+  const [couple, setCouple] = useState<Couple | null>(null);
   const [stats, setStats] = useState({
     totalGained: 0,
     totalSpent: 0,
@@ -42,8 +43,8 @@ export default function Profile() {
     if (!userProfile?.couple_id || !user) return;
 
     try {
-      const [partnerData, historyData] = await withSessionRefresh(async () => {
-        const [partnerResult, historyResult] = await Promise.all([
+      const [partnerData, historyData, coupleData] = await withSessionRefresh(async () => {
+        const [partnerResult, historyResult, coupleResult] = await Promise.all([
           supabase
             .from('users')
             .select('*')
@@ -55,15 +56,22 @@ export default function Profile() {
             .select('*')
             .eq('couple_id', userProfile.couple_id)
             .eq('user_id', user.id),
+          supabase
+            .from('couples')
+            .select('*')
+            .eq('id', userProfile.couple_id)
+            .single(),
         ]);
 
         if (partnerResult.error) throw partnerResult.error;
         if (historyResult.error) throw historyResult.error;
+        if (coupleResult.error) throw coupleResult.error;
 
-        return [partnerResult.data, historyResult.data];
+        return [partnerResult.data, historyResult.data, coupleResult.data];
       });
 
       setPartner(partnerData);
+      setCouple(coupleData);
 
       const gained = historyData
         ?.filter((e) => e.type === 'gain')
@@ -142,6 +150,39 @@ export default function Profile() {
       }
     } finally {
       setUpdatingPassword(false);
+    }
+  };
+
+  const handleToggleValidation = async () => {
+    if (!couple || !userProfile?.couple_id) return;
+
+    try {
+      const newValue = !couple.requires_validation;
+
+      await withSessionRefresh(async () => {
+        const { error } = await supabase
+          .from('couples')
+          .update({ requires_validation: newValue })
+          .eq('id', userProfile.couple_id);
+
+        if (error) throw error;
+      });
+
+      setCouple({ ...couple, requires_validation: newValue });
+      toast.success(
+        newValue
+          ? 'Validación de puntos activada'
+          : 'Validación de puntos desactivada'
+      );
+    } catch (error: any) {
+      console.error('Error updating validation setting:', error);
+      if (error.message?.includes('Session expired')) {
+        toast.error('Sesión expirada. Por favor, inicia sesión nuevamente');
+        await signOut();
+        navigate('/login');
+      } else {
+        toast.error('Error al actualizar configuración');
+      }
     }
   };
 
@@ -225,6 +266,38 @@ export default function Profile() {
                 <div className="text-center p-4 bg-blue-50 rounded-lg">
                   <p className="text-3xl font-bold text-blue-600">{stats.rewardsRedeemed}</p>
                   <p className="text-sm text-gray-600 mt-1">Recompensas</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+              <h3 className="font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5" />
+                Configuración de Validación
+              </h3>
+
+              <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-800 dark:text-white mb-1">
+                      Requerir validación de puntos
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Cuando está activado, tu pareja debe aprobar los puntos que añades antes de que se sumen al total
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleToggleValidation}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      couple?.requires_validation ? 'bg-orange-500' : 'bg-gray-300 dark:bg-gray-600'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        couple?.requires_validation ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
                 </div>
               </div>
             </div>
