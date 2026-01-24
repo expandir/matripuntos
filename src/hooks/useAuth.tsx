@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useRef, ReactNode } from 'react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { User } from '../types';
@@ -18,8 +18,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const initializedRef = useRef(false);
+  const currentUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       if (error) {
         console.error('Error getting session:', error);
@@ -31,6 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setUser(session?.user ?? null);
       if (session?.user) {
+        currentUserIdRef.current = session.user.id;
         loadUserProfile(session.user.id);
       } else {
         setLoading(false);
@@ -46,22 +52,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+        currentUserIdRef.current = null;
         setUser(null);
         setUserProfile(null);
         setLoading(false);
-      } else if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          loadUserProfile(session.user.id);
+      } else if (event === 'SIGNED_IN') {
+        const newUserId = session?.user?.id ?? null;
+        if (newUserId && newUserId !== currentUserIdRef.current) {
+          currentUserIdRef.current = newUserId;
+          setUser(session?.user ?? null);
+          loadUserProfile(newUserId);
         }
-      } else {
+      } else if (event === 'TOKEN_REFRESHED') {
         setUser(session?.user ?? null);
-        if (session?.user) {
-          loadUserProfile(session.user.id);
-        } else {
-          setUserProfile(null);
-          setLoading(false);
-        }
       }
     });
 
