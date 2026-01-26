@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, TrendingUp, Award, Trophy } from 'lucide-react';
+import { Plus, TrendingUp, Award, Trophy, BarChart3 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { withSessionRefresh } from '../lib/supabaseWrapper';
 import { useAuth } from '../hooks/useAuth';
@@ -157,7 +157,7 @@ export default function Dashboard() {
               <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Acciones Rápidas</h2>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
               <button
                 onClick={() => setShowAddModal(true)}
                 className="flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg"
@@ -180,6 +180,14 @@ export default function Dashboard() {
               >
                 <Trophy className="w-6 h-6" />
                 <span className="font-semibold">Ver Logros</span>
+              </button>
+
+              <button
+                onClick={() => navigate('/statistics')}
+                className="flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg"
+              >
+                <BarChart3 className="w-6 h-6" />
+                <span className="font-semibold">Estadísticas</span>
               </button>
             </div>
 

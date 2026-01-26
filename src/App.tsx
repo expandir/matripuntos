@@ -10,6 +10,7 @@ import History from './pages/History';
 import Profile from './pages/Profile';
 import Achievements from './pages/Achievements';
 import FairPlay from './pages/FairPlay';
+import Statistics from './pages/Statistics';
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/achievements" element={<Achievements />} />
             <Route path="/fairplay" element={<FairPlay />} />
+            <Route path="/statistics" element={<Statistics />} />
           </Routes>
         </AuthProvider>
       </ThemeProvider>
