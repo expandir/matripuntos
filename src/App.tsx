@@ -11,6 +11,7 @@ import Profile from './pages/Profile';
 import Achievements from './pages/Achievements';
 import FairPlay from './pages/FairPlay';
 import Statistics from './pages/Statistics';
+import Onboarding from './pages/Onboarding';
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
             <Route path="/link" element={<LinkCouple />} />
+            <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/rewards" element={<Rewards />} />
             <Route path="/history" element={<History />} />

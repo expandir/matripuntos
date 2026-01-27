@@ -32,8 +32,35 @@ export default function Dashboard() {
       return;
     }
 
-    loadCoupleData();
-    loadRecentHistory();
+    checkOnboardingAndLoadData();
+  }, [user, userProfile, navigate]);
+
+  const checkOnboardingAndLoadData = async () => {
+    if (!userProfile?.couple_id) return;
+
+    try {
+      const { data: couple } = await supabase
+        .from('couples')
+        .select('onboarding_completed')
+        .eq('id', userProfile.couple_id)
+        .maybeSingle();
+
+      if (couple && !couple.onboarding_completed) {
+        navigate('/onboarding');
+        return;
+      }
+
+      loadCoupleData();
+      loadRecentHistory();
+    } catch (error) {
+      console.error('Error checking onboarding:', error);
+      loadCoupleData();
+      loadRecentHistory();
+    }
+  };
+
+  useEffect(() => {
+    if (!userProfile?.couple_id) return;
 
     const coupleSubscription = supabase
       .channel('couple-changes')

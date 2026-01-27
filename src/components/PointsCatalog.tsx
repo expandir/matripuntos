@@ -50,7 +50,24 @@ export default function PointsCatalog({ coupleId, userId, couple, onActivityComp
         .order('points_value', { ascending: false });
 
       if (error) throw error;
-      setCatalogItems(data || []);
+
+      let filteredData = data || [];
+
+      if (couple.preferences?.interests && Array.isArray(couple.preferences.interests)) {
+        const interests = couple.preferences.interests;
+
+        if (interests.length > 0) {
+          filteredData = filteredData.filter(item =>
+            interests.includes(item.category)
+          );
+        }
+      }
+
+      if (!couple.has_children) {
+        filteredData = filteredData.filter(item => item.category !== 'childcare');
+      }
+
+      setCatalogItems(filteredData);
     } catch (error) {
       console.error('Error loading catalog:', error);
       toast.error('Error al cargar el catálogo');

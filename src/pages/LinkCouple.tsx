@@ -25,9 +25,28 @@ export default function LinkCouple() {
     }
 
     if (userProfile?.couple_id) {
-      navigate('/dashboard');
+      checkOnboardingStatus(userProfile.couple_id);
     }
   }, [user, userProfile, navigate]);
+
+  const checkOnboardingStatus = async (coupleId: string) => {
+    try {
+      const { data: couple } = await supabase
+        .from('couples')
+        .select('onboarding_completed')
+        .eq('id', coupleId)
+        .maybeSingle();
+
+      if (couple?.onboarding_completed) {
+        navigate('/dashboard');
+      } else {
+        navigate('/onboarding');
+      }
+    } catch (error) {
+      console.error('Error checking onboarding status:', error);
+      navigate('/dashboard');
+    }
+  };
 
   const handleCreateCouple = async () => {
     if (!user) return;
@@ -56,7 +75,11 @@ export default function LinkCouple() {
       await seedWeeklyChallengesForCouple(code);
 
       setGeneratedCode(code);
-      toast.success('Código creado. Compártelo con tu pareja');
+      toast.success('Código creado. Comenzando configuración...');
+
+      setTimeout(() => {
+        navigate('/onboarding');
+      }, 1000);
     } catch (error: any) {
       console.error('Error creating couple:', error);
       toast.error('Error al crear el código');
@@ -99,7 +122,11 @@ export default function LinkCouple() {
       toast.success('¡Emparejados con éxito!');
 
       setTimeout(() => {
-        navigate('/dashboard');
+        if (couple.onboarding_completed) {
+          navigate('/dashboard');
+        } else {
+          navigate('/onboarding');
+        }
       }, 500);
     } catch (error: any) {
       console.error('Error joining couple:', error);

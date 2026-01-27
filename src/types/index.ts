@@ -11,6 +11,10 @@ export interface Couple {
   id: string;
   points: number;
   requires_validation: boolean;
+  has_children?: boolean;
+  household_size?: number;
+  preferences?: Record<string, any>;
+  onboarding_completed?: boolean;
   created_at: string;
 }
 
