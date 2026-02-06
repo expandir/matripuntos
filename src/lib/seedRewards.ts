@@ -14,7 +14,7 @@ const allRewards: RewardDef[] = [
     name: '2 horas de tiempo libre',
     description: 'Tiempo para ti sin interrupciones',
     points_cost: 25,
-    image_url: 'https://images.pexels.com/photos/1405870/pexels-photo-1405870.jpeg?auto=compress&cs=tinysrgb&w=800',
+    image_url: 'https://images.pexels.com/photos/3897529/pexels-photo-3897529.jpeg?auto=compress&cs=tinysrgb&w=800',
     icon: 'Clock',
     tags: ['leisure']
   },
@@ -110,7 +110,7 @@ const allRewards: RewardDef[] = [
     name: 'Leer tranquilamente',
     description: 'Tiempo ininterrumpido para leer',
     points_cost: 20,
-    image_url: 'https://images.pexels.com/photos/4866020/pexels-photo-4866020.jpeg?auto=compress&cs=tinysrgb&w=800',
+    image_url: 'https://images.pexels.com/photos/1741230/pexels-photo-1741230.jpeg?auto=compress&cs=tinysrgb&w=800',
     icon: 'Book',
     tags: ['leisure']
   },
