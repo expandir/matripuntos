@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, TrendingUp, Award, Trophy, BarChart3 } from 'lucide-react';
+import { Plus, TrendingUp, Award, Trophy, BarChart3, HeartHandshake, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { withSessionRefresh } from '../lib/supabaseWrapper';
 import { useAuth } from '../hooks/useAuth';
@@ -20,6 +20,14 @@ export default function Dashboard() {
   const [recentHistory, setRecentHistory] = useState<HistoryEntry[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showBanner, setShowBanner] = useState(() => {
+    return localStorage.getItem('matripuntos_banner_dismissed') !== 'true';
+  });
+
+  const dismissBanner = () => {
+    setShowBanner(false);
+    localStorage.setItem('matripuntos_banner_dismissed', 'true');
+  };
 
   useEffect(() => {
     if (!user) {
@@ -168,6 +176,21 @@ export default function Dashboard() {
       <Header />
 
       <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        {showBanner && (
+          <div className="relative bg-gradient-to-r from-amber-50 to-orange-50 dark:from-gray-800 dark:to-gray-800 border border-amber-200 dark:border-amber-800/40 rounded-xl p-4 pr-12 flex items-start gap-3">
+            <HeartHandshake className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-amber-800 dark:text-amber-300 leading-relaxed">
+              La relacion de pareja no es una competicion. Esta herramienta es solo un apoyo ludico para mejorar la cooperacion, no un marcador para juzgar a nadie.
+            </p>
+            <button
+              onClick={dismissBanner}
+              className="absolute top-3 right-3 p-1 rounded-lg text-amber-400 hover:text-amber-600 dark:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
