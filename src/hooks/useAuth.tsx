@@ -89,46 +89,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signInWithEmail = async (email: string, password: string) => {
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) throw error;
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error;
 
-      if (data.user) {
-        await loadUserProfile(data.user.id);
-      }
-    } catch (error) {
-      console.error('Error signing in:', error);
-      throw error;
+    if (data.user) {
+      currentUserIdRef.current = data.user.id;
+      setUser(data.user);
+      await loadUserProfile(data.user.id);
     }
   };
 
   const signUpWithEmail = async (email: string, password: string, name: string) => {
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-      if (error) throw error;
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+    if (error) throw error;
 
-      if (data.user) {
-        const { error: profileError } = await supabase
-          .from('users')
-          .insert({
-            id: data.user.id,
-            email: data.user.email!,
-            name: name,
-            photo_url: null,
-          });
+    if (data.user) {
+      const { error: profileError } = await supabase
+        .from('users')
+        .insert({
+          id: data.user.id,
+          email: data.user.email!,
+          name: name,
+          photo_url: null,
+        });
 
-        if (profileError) throw profileError;
-        await loadUserProfile(data.user.id);
-      }
-    } catch (error) {
-      console.error('Error signing up:', error);
-      throw error;
+      if (profileError) throw profileError;
+
+      currentUserIdRef.current = data.user.id;
+      setUser(data.user);
+      await loadUserProfile(data.user.id);
     }
   };
 
