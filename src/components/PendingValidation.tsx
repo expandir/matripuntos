@@ -83,7 +83,11 @@ export default function PendingValidation({ coupleId, currentUserId, onPointsVal
 
       const { error: updateError } = await supabase
         .from('pending_points')
-        .update({ status: approve ? 'approved' : 'rejected' })
+        .update({
+          status: approve ? 'approved' : 'rejected',
+          reviewed_by: currentUserId,
+          reviewed_at: new Date().toISOString(),
+        })
         .eq('id', pointId);
 
       if (updateError) throw updateError;
@@ -105,6 +109,14 @@ export default function PendingValidation({ coupleId, currentUserId, onPointsVal
         });
 
         if (historyError) throw historyError;
+
+        if (point.catalog_item_id) {
+          await supabase.from('catalog_completions').insert({
+            couple_id: coupleId,
+            user_id: point.user_id,
+            catalog_item_id: point.catalog_item_id,
+          });
+        }
 
         toast.success('Puntos aprobados');
       } else {

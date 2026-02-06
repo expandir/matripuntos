@@ -96,16 +96,6 @@ export default function PointsCatalog({ coupleId, userId, couple, onActivityComp
 
         if (pendingError) throw pendingError;
 
-        const { error: completionError } = await supabase
-          .from('catalog_completions')
-          .insert({
-            couple_id: coupleId,
-            user_id: userId,
-            catalog_item_id: selectedItem.id,
-          });
-
-        if (completionError) throw completionError;
-
         toast.success('Actividad enviada para validación');
       } else {
         const { error: completionError } = await supabase
