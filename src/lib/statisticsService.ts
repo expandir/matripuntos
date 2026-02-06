@@ -23,7 +23,6 @@ export interface OverallStats {
   totalPointsSpent: number;
   currentPoints: number;
   totalRewards: number;
-  completedChallenges: number;
   totalAchievements: number;
 }
 
@@ -35,7 +34,7 @@ const categoryNames: Record<string, string> = {
 };
 
 export async function getOverallStats(coupleId: string): Promise<OverallStats> {
-  const [historyResult, coupleResult, challengesResult, achievementsResult] = await Promise.all([
+  const [historyResult, coupleResult, achievementsResult] = await Promise.all([
     supabase
       .from('history')
       .select('points, type')
@@ -45,11 +44,6 @@ export async function getOverallStats(coupleId: string): Promise<OverallStats> {
       .select('points')
       .eq('id', coupleId)
       .maybeSingle(),
-    supabase
-      .from('weekly_challenges')
-      .select('id')
-      .eq('couple_id', coupleId)
-      .eq('completed', true),
     supabase
       .from('user_achievements')
       .select('id')
@@ -70,7 +64,6 @@ export async function getOverallStats(coupleId: string): Promise<OverallStats> {
     totalPointsSpent,
     currentPoints: coupleResult.data?.points || 0,
     totalRewards: history.filter(h => h.type === 'spend').length,
-    completedChallenges: challengesResult.data?.length || 0,
     totalAchievements: achievementsResult.data?.length || 0
   };
 }

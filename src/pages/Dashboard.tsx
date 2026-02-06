@@ -8,7 +8,6 @@ import { Couple, HistoryEntry } from '../types';
 import Header from '../components/Header';
 import PointsBadge from '../components/PointsBadge';
 import AddPointsModal from '../components/AddPointsModal';
-import WeeklyChallenges from '../components/WeeklyChallenges';
 import PointsCatalog from '../components/PointsCatalog';
 import PendingValidation from '../components/PendingValidation';
 import toast from 'react-hot-toast';
@@ -201,8 +200,8 @@ export default function Dashboard() {
           <PointsBadge points={couple?.points || 0} />
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="md:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+        <div className="grid gap-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Acciones Rápidas</h2>
             </div>
@@ -293,17 +292,6 @@ export default function Dashboard() {
                 </button>
               )}
             </div>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <WeeklyChallenges
-              coupleId={userProfile!.couple_id!}
-              userId={user!.id}
-              onChallengeComplete={() => {
-                loadCoupleData();
-                loadRecentHistory();
-              }}
-            />
           </div>
         </div>
 

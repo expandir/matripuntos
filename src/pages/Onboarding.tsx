@@ -8,7 +8,6 @@ import {
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { seedRewardsForCouple } from '../lib/seedRewards';
-import { seedWeeklyChallengesForCouple } from '../lib/seedChallenges';
 import toast from 'react-hot-toast';
 
 interface OnboardingData {
@@ -127,7 +126,6 @@ export default function Onboarding() {
         hasPets: data.hasPets,
         hasChildren: data.hasChildren,
       });
-      await seedWeeklyChallengesForCouple(userProfile.couple_id);
 
       try { localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
 

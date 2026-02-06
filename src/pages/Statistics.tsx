@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, TrendingUp, TrendingDown, Award, Target, Trophy } from 'lucide-react';
+import { ArrowLeft, TrendingUp, TrendingDown, Award, Trophy } from 'lucide-react';
 import {
   LineChart,
   Line,
@@ -120,14 +120,6 @@ export default function Statistics() {
                 <span className="text-sm text-gray-600">Recompensas</span>
               </div>
               <p className="text-3xl font-bold text-blue-600">{overallStats.totalRewards}</p>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-purple-200">
-              <div className="flex items-center gap-3 mb-2">
-                <Target className="w-6 h-6 text-purple-600" />
-                <span className="text-sm text-gray-600">Desafíos</span>
-              </div>
-              <p className="text-3xl font-bold text-purple-600">{overallStats.completedChallenges}</p>
             </div>
 
             <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-yellow-200">
