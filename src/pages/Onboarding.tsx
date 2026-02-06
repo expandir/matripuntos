@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Heart, Users, Home, Baby, Sparkles, CheckCircle2,
@@ -20,21 +20,40 @@ interface OnboardingData {
   rewardPreferences: string[];
 }
 
+const STORAGE_KEY = 'matripuntos_onboarding';
 const TOTAL_STEPS = 5;
 
-export default function Onboarding() {
-  const navigate = useNavigate();
-  const { userProfile } = useAuth();
-  const [step, setStep] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<OnboardingData>({
+function loadSavedData(): OnboardingData {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch { /* ignore */ }
+  return {
     hasChildren: false,
     hasPets: false,
     householdSize: 2,
     workStyle: 'both_office',
     interests: [],
     rewardPreferences: []
-  });
+  };
+}
+
+export default function Onboarding() {
+  const navigate = useNavigate();
+  const { userProfile } = useAuth();
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<OnboardingData>(loadSavedData);
+
+  const persistData = useCallback((updated: OnboardingData) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    } catch { /* ignore */ }
+  }, []);
+
+  useEffect(() => {
+    persistData(data);
+  }, [data, persistData]);
 
   const interestOptions = [
     { id: 'household', label: 'Tareas del hogar', description: 'Limpieza, cocina, lavanderia...', icon: Home },
@@ -76,8 +95,11 @@ export default function Onboarding() {
   };
 
   const handleSubmit = async () => {
+    persistData(data);
+
     if (!userProfile?.couple_id) {
-      toast.error('No se encontro la pareja vinculada');
+      toast('Respuestas guardadas. Vincula tu pareja para continuar.', { icon: '💾' });
+      navigate('/link');
       return;
     }
 
@@ -106,6 +128,8 @@ export default function Onboarding() {
         hasChildren: data.hasChildren,
       });
       await seedWeeklyChallengesForCouple(userProfile.couple_id);
+
+      try { localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
 
       toast.success('Experiencia personalizada lista');
       navigate('/dashboard');
