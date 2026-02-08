@@ -12,6 +12,7 @@ import Achievements from './pages/Achievements';
 import FairPlay from './pages/FairPlay';
 import Statistics from './pages/Statistics';
 import Onboarding from './pages/Onboarding';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/link" element={<LinkCouple />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/dashboard" element={<Dashboard />} />

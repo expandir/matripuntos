@@ -8,8 +8,9 @@ export async function withSessionRefresh<T>(
   } catch (error: any) {
     if (
       error.message?.includes('Auth session missing') ||
-      error.message?.includes('JWT') ||
-      error.message?.includes('session')
+      error.message?.includes('JWT expired') ||
+      error.message?.includes('JWT claims invalid') ||
+      error.message?.includes('session_not_found')
     ) {
       console.log('Session error detected, attempting refresh...');
 

@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, useRef, ReactNode } from 'react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { User } from '../types';
 
@@ -9,6 +10,7 @@ interface AuthContextType {
   loading: boolean;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (email: string, password: string, name: string) => Promise<void>;
+  resetPasswordForEmail: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -20,6 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const initializedRef = useRef(false);
   const currentUserIdRef = useRef<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (initializedRef.current) return;
@@ -63,6 +66,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(session?.user ?? null);
           loadUserProfile(newUserId);
         }
+      } else if (event === 'PASSWORD_RECOVERY') {
+        setUser(session?.user ?? null);
+        navigate('/reset-password');
       } else if (event === 'TOKEN_REFRESHED') {
         setUser(session?.user ?? null);
       }
@@ -127,6 +133,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const resetPasswordForEmail = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/reset-password',
+    });
+    if (error) throw error;
+  };
+
   const signOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
@@ -143,7 +156,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, userProfile, loading, signInWithEmail, signUpWithEmail, signOut }}>
+    <AuthContext.Provider value={{ user, userProfile, loading, signInWithEmail, signUpWithEmail, resetPasswordForEmail, signOut }}>
       {children}
     </AuthContext.Provider>
   );

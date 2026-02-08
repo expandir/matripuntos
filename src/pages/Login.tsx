@@ -4,20 +4,48 @@ import { Heart, Mail, Lock, User } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import toast from 'react-hot-toast';
 
+type ViewMode = 'login' | 'signup' | 'forgot';
+
 export default function Login() {
-  const { user, signInWithEmail, signUpWithEmail } = useAuth();
+  const { user, signInWithEmail, signUpWithEmail, resetPasswordForEmail } = useAuth();
   const navigate = useNavigate();
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+
+  const isSignUp = viewMode === 'signup';
+  const isForgot = viewMode === 'forgot';
 
   useEffect(() => {
     if (user) {
       navigate('/link');
     }
   }, [user, navigate]);
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!email) {
+      toast.error('Por favor introduce tu email');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await resetPasswordForEmail(email);
+      setResetSent(true);
+      toast.success('Se ha enviado un enlace de recuperación a tu email');
+    } catch (error: any) {
+      console.error('Error sending reset email:', error);
+      toast.error('Error al enviar el email de recuperación');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,84 +94,161 @@ export default function Login() {
           </h1>
 
           <p className="text-center text-gray-600 dark:text-gray-300 mb-8">
-            Reconoce y balancea las tareas del hogar. Gana tiempo para ti.
+            {isForgot
+              ? 'Introduce tu email para recuperar tu contraseña'
+              : 'Reconoce y balancea las tareas del hogar. Gana tiempo para ti.'}
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {isSignUp && (
+          {isForgot ? (
+            resetSent ? (
+              <div className="text-center space-y-4">
+                <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-lg p-4">
+                  <p className="text-green-700 dark:text-green-300 text-sm">
+                    Hemos enviado un enlace de recuperación a <strong>{email}</strong>. Revisa tu bandeja de entrada (y la carpeta de spam).
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setViewMode('login');
+                    setResetSent(false);
+                    setEmail('');
+                  }}
+                  className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-medium"
+                >
+                  Volver a iniciar sesión
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleForgotPassword} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Email
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="tu@email.com"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-semibold py-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? 'Enviando...' : 'Enviar enlace de recuperación'}
+                </button>
+              </form>
+            )
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {isSignUp && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Nombre
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Tu nombre"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Nombre
+                  Email
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Tu nombre"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="tu@email.com"
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
               </div>
-            )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="tu@email.com"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Contraseña
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                </div>
+                {isSignUp && (
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Mínimo 6 caracteres</p>
+                )}
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Contraseña
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                />
-              </div>
-              {isSignUp && (
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Mínimo 6 caracteres</p>
+              {!isSignUp && (
+                <div className="text-right">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setViewMode('forgot');
+                      setPassword('');
+                    }}
+                    className="text-sm text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300"
+                  >
+                    ¿Olvidaste tu contraseña?
+                  </button>
+                </div>
               )}
-            </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-semibold py-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Cargando...' : isSignUp ? 'Crear Cuenta' : 'Iniciar Sesión'}
-            </button>
-          </form>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-semibold py-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Cargando...' : isSignUp ? 'Crear Cuenta' : 'Iniciar Sesión'}
+              </button>
+            </form>
+          )}
 
           <div className="mt-6 text-center">
-            <button
-              onClick={() => {
-                setIsSignUp(!isSignUp);
-                setEmail('');
-                setPassword('');
-                setName('');
-              }}
-              className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-medium"
-            >
-              {isSignUp ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'}
-            </button>
+            {isForgot && !resetSent ? (
+              <button
+                onClick={() => {
+                  setViewMode('login');
+                  setEmail('');
+                }}
+                className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-medium"
+              >
+                Volver a iniciar sesión
+              </button>
+            ) : !isForgot && (
+              <button
+                onClick={() => {
+                  setViewMode(isSignUp ? 'login' : 'signup');
+                  setEmail('');
+                  setPassword('');
+                  setName('');
+                }}
+                className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-medium"
+              >
+                {isSignUp ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'}
+              </button>
+            )}
           </div>
 
           <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
