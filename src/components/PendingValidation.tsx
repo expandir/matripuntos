@@ -144,15 +144,23 @@ export default function PendingValidation({ coupleId, currentUserId, onPointsVal
 
   const myPendingPoints = pendingPoints.filter(p => p.user_id === currentUserId);
   const partnerPendingPoints = pendingPoints.filter(p => p.user_id !== currentUserId);
+  const partnerName = partnerPendingPoints[0]?.user?.name
+    || myPendingPoints[0]?.user?.name
+      ? 'tu pareja'
+      : 'tu pareja';
 
   return (
     <div className="space-y-6">
-      {partnerPendingPoints.length > 0 && (
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
-            <Clock className="w-5 h-5 text-orange-500" />
-            Pendiente de tu validación
-          </h3>
+      <div>
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-1 flex items-center gap-2">
+          <CheckCircle2 className="w-5 h-5 text-orange-500" />
+          Validar puntos de tu pareja
+        </h3>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-3 ml-7">
+          Aprueba o rechaza los puntos que tu pareja ha registrado
+        </p>
+
+        {partnerPendingPoints.length > 0 ? (
           <div className="space-y-3">
             {partnerPendingPoints.map((point) => (
               <div
@@ -202,15 +210,25 @@ export default function PendingValidation({ coupleId, currentUserId, onPointsVal
               </div>
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="text-center py-6 bg-gray-50 dark:bg-gray-700/30 rounded-lg border border-dashed border-gray-300 dark:border-gray-600">
+            <Clock className="w-8 h-8 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Tu pareja no tiene puntos pendientes de tu aprobacion
+            </p>
+          </div>
+        )}
+      </div>
 
       {myPendingPoints.length > 0 && (
         <div>
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-1 flex items-center gap-2">
             <Clock className="w-5 h-5 text-blue-500" />
-            Tus puntos pendientes de validación
+            Tus puntos esperando aprobacion
           </h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-3 ml-7">
+            Estos puntos seran sumados cuando tu pareja los apruebe
+          </p>
           <div className="space-y-3">
             {myPendingPoints.map((point) => (
               <div
@@ -242,8 +260,11 @@ export default function PendingValidation({ coupleId, currentUserId, onPointsVal
       )}
 
       {pendingPoints.length === 0 && (
-        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-          No hay puntos pendientes de validación
+        <div className="text-center py-6 bg-gray-50 dark:bg-gray-700/30 rounded-lg border border-dashed border-gray-300 dark:border-gray-600">
+          <Clock className="w-8 h-8 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            No hay puntos pendientes de validacion
+          </p>
         </div>
       )}
     </div>
