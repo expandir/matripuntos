@@ -15,6 +15,7 @@ export interface Couple {
   household_size?: number;
   preferences?: Record<string, any>;
   onboarding_completed?: boolean;
+  calendar_enabled?: boolean;
   created_at: string;
 }
 
@@ -81,4 +82,67 @@ export interface PendingPoints {
   catalog_item_id?: string;
   status: 'pending' | 'approved' | 'rejected';
   created_at: string;
+}
+
+export type CalendarTaskCategory = 'hogar' | 'hijos' | 'gestion' | 'social' | 'bienestar';
+export type TaskFrequency = 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'flexible';
+
+export interface CalendarTask {
+  id: string;
+  name: string;
+  description: string;
+  category: CalendarTaskCategory;
+  estimated_minutes: number;
+  base_points: number;
+  icon: string;
+  is_default: boolean;
+  created_at: string;
+}
+
+export interface TaskOwnership {
+  id: string;
+  couple_id: string;
+  task_id: string;
+  owner_id: string;
+  frequency: TaskFrequency;
+  preferred_day: number | null;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+  task?: CalendarTask;
+}
+
+export interface MemberWorkConfig {
+  id: string;
+  couple_id: string;
+  user_id: string;
+  monthly_income: number;
+  weekly_work_hours: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CalendarEntry {
+  id: string;
+  couple_id: string;
+  task_id: string | null;
+  user_id: string;
+  title: string;
+  scheduled_date: string;
+  completed: boolean;
+  points_earned: number;
+  notes: string | null;
+  completed_at: string | null;
+  created_at: string;
+}
+
+export interface FairnessResult {
+  score: number;
+  member1ExpectedShare: number;
+  member2ExpectedShare: number;
+  member1ActualShare: number;
+  member2ActualShare: number;
+  member1TotalPoints: number;
+  member2TotalPoints: number;
+  suggestion: string;
 }

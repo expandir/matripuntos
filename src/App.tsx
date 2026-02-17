@@ -11,6 +11,7 @@ import Profile from './pages/Profile';
 import Achievements from './pages/Achievements';
 import FairPlay from './pages/FairPlay';
 import Statistics from './pages/Statistics';
+import Calendar from './pages/Calendar';
 import Onboarding from './pages/Onboarding';
 import ResetPassword from './pages/ResetPassword';
 
@@ -33,6 +34,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/achievements" element={<Achievements />} />
             <Route path="/fairplay" element={<FairPlay />} />
+            <Route path="/calendario" element={<Calendar />} />
             <Route path="/statistics" element={<Statistics />} />
           </Routes>
         </AuthProvider>

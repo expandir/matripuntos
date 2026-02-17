@@ -1,4 +1,4 @@
-import { Heart, Home, Gift, History, User, Moon, Sun } from 'lucide-react';
+import { Heart, Home, Gift, History, User, Moon, Sun, CalendarDays } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTheme } from '../hooks/useTheme';
 
@@ -8,6 +8,7 @@ export default function Header() {
 
   const navItems = [
     { path: '/dashboard', icon: Home, label: 'Inicio' },
+    { path: '/calendario', icon: CalendarDays, label: 'Calendario' },
     { path: '/rewards', icon: Gift, label: 'Recompensas' },
     { path: '/history', icon: History, label: 'Historial' },
     { path: '/profile', icon: User, label: 'Perfil' },
