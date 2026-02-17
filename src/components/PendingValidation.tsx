@@ -128,9 +128,10 @@ export default function PendingValidation({ coupleId, currentUserId, onPointsVal
       }
 
       loadPendingPoints();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error validating points:', error);
-      toast.error('Error al validar puntos');
+      const msg = error?.message || error?.details || 'Error desconocido';
+      toast.error(`Error al validar: ${msg}`);
     }
   };
 
