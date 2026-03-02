@@ -1,16 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Mail, Calendar, Users, Award, KeyRound, X, ShieldCheck } from 'lucide-react';
+import { LogOut, Mail, Calendar, Users, Award, KeyRound, X, ShieldCheck, Camera, Trash2, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { withSessionRefresh } from '../lib/supabaseWrapper';
 import { useAuth } from '../hooks/useAuth';
+import { uploadAvatar, removeAvatar } from '../lib/avatarService';
 import { User, Couple } from '../types';
 import Header from '../components/Header';
+import CoupleAvatar from '../components/CoupleAvatar';
 import NotificationSettings from '../components/NotificationSettings';
 import toast from 'react-hot-toast';
 
 export default function Profile() {
-  const { user, userProfile, signOut } = useAuth();
+  const { user, userProfile, signOut, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const [partner, setPartner] = useState<User | null>(null);
   const [couple, setCouple] = useState<Couple | null>(null);
@@ -20,10 +22,12 @@ export default function Profile() {
     rewardsRedeemed: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [updatingPassword, setUpdatingPassword] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!user) {
@@ -74,14 +78,14 @@ export default function Profile() {
       setCouple(coupleData);
 
       const gained = historyData
-        ?.filter((e) => e.type === 'gain')
-        .reduce((sum, e) => sum + e.points, 0) || 0;
+        ?.filter((e: any) => e.type === 'gain')
+        .reduce((sum: number, e: any) => sum + e.points, 0) || 0;
 
       const spent = historyData
-        ?.filter((e) => e.type === 'spend')
-        .reduce((sum, e) => sum + Math.abs(e.points), 0) || 0;
+        ?.filter((e: any) => e.type === 'spend')
+        .reduce((sum: number, e: any) => sum + Math.abs(e.points), 0) || 0;
 
-      const redeemed = historyData?.filter((e) => e.type === 'spend').length || 0;
+      const redeemed = historyData?.filter((e: any) => e.type === 'spend').length || 0;
 
       setStats({
         totalGained: gained,
@@ -91,7 +95,7 @@ export default function Profile() {
     } catch (error: any) {
       console.error('Error loading profile data:', error);
       if (error.message?.includes('Session expired')) {
-        toast.error('Sesión expirada. Por favor, inicia sesión nuevamente');
+        toast.error('Sesion expirada. Por favor, inicia sesion nuevamente');
         navigate('/login');
       } else {
         toast.error('Error al cargar perfil');
@@ -101,13 +105,50 @@ export default function Profile() {
     }
   };
 
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('La imagen no puede superar 2MB');
+      return;
+    }
+
+    setUploadingPhoto(true);
+    try {
+      await uploadAvatar(user.id, file);
+      await refreshProfile();
+      toast.success('Foto actualizada');
+    } catch (err: any) {
+      console.error('Upload error:', err);
+      toast.error('Error al subir la foto');
+    } finally {
+      setUploadingPhoto(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleRemovePhoto = async () => {
+    if (!user) return;
+    setUploadingPhoto(true);
+    try {
+      await removeAvatar(user.id);
+      await refreshProfile();
+      toast.success('Foto eliminada');
+    } catch {
+      toast.error('Error al eliminar la foto');
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
   const handleSignOut = async () => {
     try {
       await signOut();
-      toast.success('Sesión cerrada');
+      toast.success('Sesion cerrada');
       navigate('/login');
     } catch (error) {
-      toast.error('Error al cerrar sesión');
+      toast.error('Error al cerrar sesion');
     }
   };
 
@@ -115,12 +156,12 @@ export default function Profile() {
     e.preventDefault();
 
     if (newPassword.length < 6) {
-      toast.error('La contraseña debe tener al menos 6 caracteres');
+      toast.error('La contrasena debe tener al menos 6 caracteres');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      toast.error('Las contraseñas no coinciden');
+      toast.error('Las contrasenas no coinciden');
       return;
     }
 
@@ -135,18 +176,18 @@ export default function Profile() {
         if (error) throw error;
       });
 
-      toast.success('Contraseña actualizada correctamente');
+      toast.success('Contrasena actualizada correctamente');
       setShowPasswordModal(false);
       setNewPassword('');
       setConfirmPassword('');
     } catch (error: any) {
       console.error('Error updating password:', error);
       if (error.message?.includes('Session expired')) {
-        toast.error('Sesión expirada. Por favor, inicia sesión nuevamente');
+        toast.error('Sesion expirada. Por favor, inicia sesion nuevamente');
         await signOut();
         navigate('/login');
       } else {
-        toast.error(error.message || 'Error al cambiar la contraseña');
+        toast.error(error.message || 'Error al cambiar la contrasena');
       }
     } finally {
       setUpdatingPassword(false);
@@ -171,17 +212,17 @@ export default function Profile() {
       setCouple({ ...couple, requires_validation: newValue });
       toast.success(
         newValue
-          ? 'Validación de puntos activada'
-          : 'Validación de puntos desactivada'
+          ? 'Validacion de puntos activada'
+          : 'Validacion de puntos desactivada'
       );
     } catch (error: any) {
       console.error('Error updating validation setting:', error);
       if (error.message?.includes('Session expired')) {
-        toast.error('Sesión expirada. Por favor, inicia sesión nuevamente');
+        toast.error('Sesion expirada. Por favor, inicia sesion nuevamente');
         await signOut();
         navigate('/login');
       } else {
-        toast.error('Error al actualizar configuración');
+        toast.error('Error al actualizar configuracion');
       }
     }
   };
@@ -199,25 +240,66 @@ export default function Profile() {
       <Header />
 
       <main className="max-w-4xl mx-auto px-4 py-6">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Mi Perfil</h1>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">Mi Perfil</h1>
+
+        {userProfile && (
+          <div className="flex justify-center mb-8">
+            <CoupleAvatar user={userProfile} partner={partner} size="lg" />
+          </div>
+        )}
 
         <div className="grid md:grid-cols-3 gap-6 mb-6">
           <div className="md:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
             <div className="flex items-start gap-6 mb-6">
-              {userProfile?.photo_url ? (
-                <img
-                  src={userProfile.photo_url}
-                  alt={userProfile.name}
-                  className="w-24 h-24 rounded-full"
-                />
-              ) : (
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-orange-400 to-pink-400 flex items-center justify-center text-white text-3xl font-bold">
-                  {userProfile?.name?.[0] || '?'}
+              <div className="relative group flex-shrink-0">
+                {userProfile?.photo_url ? (
+                  <img
+                    src={userProfile.photo_url}
+                    alt={userProfile.name}
+                    className="w-24 h-24 rounded-full object-cover ring-4 ring-orange-100 dark:ring-orange-900/30"
+                  />
+                ) : (
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-orange-400 to-pink-400 flex items-center justify-center text-white text-3xl font-bold ring-4 ring-orange-100 dark:ring-orange-900/30">
+                    {userProfile?.name?.[0] || '?'}
+                  </div>
+                )}
+
+                <div className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center">
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploadingPhoto}
+                      className="p-2 bg-white/90 rounded-full shadow-lg hover:bg-white transition-colors"
+                    >
+                      {uploadingPhoto ? (
+                        <Loader2 className="w-4 h-4 text-gray-600 animate-spin" />
+                      ) : (
+                        <Camera className="w-4 h-4 text-gray-600" />
+                      )}
+                    </button>
+                    {userProfile?.photo_url && (
+                      <button
+                        onClick={handleRemovePhoto}
+                        disabled={uploadingPhoto}
+                        className="p-2 bg-white/90 rounded-full shadow-lg hover:bg-white transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-500" />
+                      </button>
+                    )}
+                  </div>
                 </div>
-              )}
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                />
+              </div>
 
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">{userProfile?.name}</h2>
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">{userProfile?.name}</h2>
 
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
@@ -246,26 +328,26 @@ export default function Profile() {
               </div>
             </div>
 
-            <div className="border-t border-gray-200 pt-6">
-              <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+              <h3 className="font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
                 <Award className="w-5 h-5" />
-                Mis Estadísticas
+                Mis Estadisticas
               </h3>
 
               <div className="grid grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-green-50 rounded-lg">
+                <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                   <p className="text-3xl font-bold text-green-600">{stats.totalGained}</p>
-                  <p className="text-sm text-gray-600 mt-1">Puntos Ganados</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Puntos Ganados</p>
                 </div>
 
-                <div className="text-center p-4 bg-red-50 rounded-lg">
+                <div className="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
                   <p className="text-3xl font-bold text-red-600">{stats.totalSpent}</p>
-                  <p className="text-sm text-gray-600 mt-1">Puntos Gastados</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Puntos Gastados</p>
                 </div>
 
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                   <p className="text-3xl font-bold text-blue-600">{stats.rewardsRedeemed}</p>
-                  <p className="text-sm text-gray-600 mt-1">Recompensas</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Recompensas</p>
                 </div>
               </div>
             </div>
@@ -273,17 +355,17 @@ export default function Profile() {
             <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
               <h3 className="font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5" />
-                Configuración de Validación
+                Configuracion de Validacion
               </h3>
 
               <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
                     <p className="font-medium text-gray-800 dark:text-white mb-1">
-                      Requerir validación de puntos
+                      Requerir validacion de puntos
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Cuando está activado, tu pareja debe aprobar los puntos que añades antes de que se sumen al total
+                      Cuando esta activado, tu pareja debe aprobar los puntos que anades antes de que se sumen al total
                     </p>
                   </div>
                   <button
@@ -306,24 +388,23 @@ export default function Profile() {
           <div className="space-y-4">
             {partner && (
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-                <h3 className="font-semibold text-gray-800 mb-4">Mi Pareja</h3>
+                <h3 className="font-semibold text-gray-800 dark:text-white mb-4">Mi Pareja</h3>
 
                 <div className="flex items-center gap-3">
                   {partner.photo_url ? (
                     <img
                       src={partner.photo_url}
                       alt={partner.name}
-                      className="w-12 h-12 rounded-full"
+                      className="w-12 h-12 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-green-400 flex items-center justify-center text-white font-semibold">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-sky-400 to-teal-400 flex items-center justify-center text-white font-semibold">
                       {partner.name[0]}
                     </div>
                   )}
 
                   <div>
                     <p className="font-medium text-gray-800 dark:text-white">{partner.name}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{partner.email}</p>
                   </div>
                 </div>
               </div>
@@ -332,12 +413,12 @@ export default function Profile() {
             {user && <NotificationSettings userId={user.id} />}
 
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-              <h3 className="font-semibold text-gray-800 mb-4">Código de Pareja</h3>
+              <h3 className="font-semibold text-gray-800 dark:text-white mb-4">Codigo de Pareja</h3>
               <p className="text-2xl font-mono font-bold text-center py-3 bg-gray-100 dark:bg-gray-700 rounded-lg text-gray-800 dark:text-white">
                 {userProfile?.couple_id}
               </p>
               <p className="text-xs text-gray-500 mt-2 text-center">
-                Comparte este código para vincular cuentas
+                Comparte este codigo para vincular cuentas
               </p>
             </div>
 
@@ -346,7 +427,7 @@ export default function Profile() {
               className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
             >
               <KeyRound className="w-5 h-5" />
-              <span className="font-medium">Cambiar Contraseña</span>
+              <span className="font-medium">Cambiar Contrasena</span>
             </button>
 
             <button
@@ -354,7 +435,7 @@ export default function Profile() {
               className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
             >
               <LogOut className="w-5 h-5" />
-              <span className="font-medium">Cerrar Sesión</span>
+              <span className="font-medium">Cerrar Sesion</span>
             </button>
           </div>
         </div>
@@ -365,7 +446,7 @@ export default function Profile() {
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold text-gray-800 dark:text-white">
-                Cambiar Contraseña
+                Cambiar Contrasena
               </h3>
               <button
                 onClick={() => {
@@ -382,7 +463,7 @@ export default function Profile() {
             <form onSubmit={handleChangePassword} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Nueva Contraseña
+                  Nueva Contrasena
                 </label>
                 <input
                   type="password"
@@ -391,13 +472,13 @@ export default function Profile() {
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                   required
                   minLength={6}
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Minimo 6 caracteres"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Confirmar Contraseña
+                  Confirmar Contrasena
                 </label>
                 <input
                   type="password"
@@ -406,7 +487,7 @@ export default function Profile() {
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                   required
                   minLength={6}
-                  placeholder="Repite la contraseña"
+                  placeholder="Repite la contrasena"
                 />
               </div>
 

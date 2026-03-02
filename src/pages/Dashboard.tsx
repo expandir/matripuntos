@@ -4,8 +4,9 @@ import { Plus, TrendingUp, Award, Trophy, BarChart3, HeartHandshake, X } from 'l
 import { supabase } from '../lib/supabase';
 import { withSessionRefresh } from '../lib/supabaseWrapper';
 import { useAuth } from '../hooks/useAuth';
-import { Couple, HistoryEntry } from '../types';
+import { Couple, HistoryEntry, User } from '../types';
 import Header from '../components/Header';
+import CoupleAvatar from '../components/CoupleAvatar';
 import PointsBadge from '../components/PointsBadge';
 import AddPointsModal from '../components/AddPointsModal';
 import PointsCatalog from '../components/PointsCatalog';
@@ -16,6 +17,7 @@ export default function Dashboard() {
   const { user, userProfile } = useAuth();
   const navigate = useNavigate();
   const [couple, setCouple] = useState<Couple | null>(null);
+  const [partner, setPartner] = useState<User | null>(null);
   const [recentHistory, setRecentHistory] = useState<HistoryEntry[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -108,21 +110,20 @@ export default function Dashboard() {
   }, [user, userProfile, navigate]);
 
   const loadCoupleData = async () => {
-    if (!userProfile?.couple_id) return;
+    if (!userProfile?.couple_id || !user) return;
 
     try {
       const data = await withSessionRefresh(async () => {
-        const { data, error } = await supabase
-          .from('couples')
-          .select('*')
-          .eq('id', userProfile.couple_id)
-          .single();
-
-        if (error) throw error;
-        return data;
+        const [coupleRes, partnerRes] = await Promise.all([
+          supabase.from('couples').select('*').eq('id', userProfile.couple_id).single(),
+          supabase.from('users').select('*').eq('couple_id', userProfile.couple_id).neq('id', user.id).maybeSingle(),
+        ]);
+        if (coupleRes.error) throw coupleRes.error;
+        return { couple: coupleRes.data, partner: partnerRes.data };
       });
 
-      setCouple(data);
+      setCouple(data.couple);
+      setPartner(data.partner);
     } catch (error: any) {
       console.error('Error loading couple data:', error);
       if (error.message?.includes('Session expired')) {
@@ -191,11 +192,18 @@ export default function Dashboard() {
         )}
 
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
-              ¡Hola, {userProfile?.name}!
-            </h1>
-            <p className="text-gray-600 dark:text-gray-300">Reconociendo tu trabajo en casa</p>
+          <div className="flex items-center gap-4">
+            {userProfile && (
+              <CoupleAvatar user={userProfile} partner={partner} size="md" />
+            )}
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-1">
+                Hola, {userProfile?.name}!
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300">
+                {partner ? `Junto a ${partner.name}` : 'Reconociendo tu trabajo en casa'}
+              </p>
+            </div>
           </div>
           <PointsBadge points={couple?.points || 0} />
         </div>
