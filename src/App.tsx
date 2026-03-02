@@ -14,6 +14,7 @@ import Statistics from './pages/Statistics';
 import Calendar from './pages/Calendar';
 import Onboarding from './pages/Onboarding';
 import ResetPassword from './pages/ResetPassword';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 function App() {
 
@@ -36,6 +37,7 @@ function App() {
             <Route path="/fairplay" element={<FairPlay />} />
             <Route path="/calendario" element={<Calendar />} />
             <Route path="/statistics" element={<Statistics />} />
+            <Route path="/privacidad" element={<PrivacyPolicy />} />
           </Routes>
         </AuthProvider>
       </ThemeProvider>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Heart, Mail, Lock, User } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import toast from 'react-hot-toast';
@@ -251,9 +251,15 @@ export default function Login() {
             )}
           </div>
 
-          <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
-            Sistema de reconocimiento justo para parejas y familias
-          </p>
+          <div className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6 space-y-1">
+            <p>Sistema de reconocimiento justo para parejas y familias</p>
+            <Link
+              to="/privacidad"
+              className="text-xs text-gray-400 dark:text-gray-500 hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
+            >
+              Politica de Privacidad
+            </Link>
+          </div>
         </div>
       </div>
     </div>

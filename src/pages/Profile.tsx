@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { LogOut, Mail, Calendar, Users, Award, KeyRound, X, ShieldCheck, Camera, Trash2, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { withSessionRefresh } from '../lib/supabaseWrapper';
@@ -437,6 +437,13 @@ export default function Profile() {
               <LogOut className="w-5 h-5" />
               <span className="font-medium">Cerrar Sesion</span>
             </button>
+
+            <Link
+              to="/privacidad"
+              className="block text-center text-xs text-gray-400 dark:text-gray-500 hover:text-orange-500 dark:hover:text-orange-400 transition-colors pt-2"
+            >
+              Politica de Privacidad
+            </Link>
           </div>
         </div>
       </main>
