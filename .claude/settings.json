@@ -1,0 +1,28 @@
+{
+  "model": "sonnet",
+  "advisorModel": "claude-opus-5-5",
+  "hooks": {
+    "PostToolUseFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/jev.py\" retry",
+            "timeout": 12
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/jev.py\" route",
+            "timeout": 12
+          }
+        ]
+      }
+    ]
+  }
+}
